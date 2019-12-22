@@ -1,0 +1,28 @@
+{
+  "name": "vatbot",
+  "version": "1.0.0",
+  "description": "A Discord Bot for the VATSIM Network",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hcphoon01/VATBot.git"
+  },
+  "keywords": [
+    "VATSIM",
+    "Discord",
+    "Bot"
+  ],
+  "author": "Harry Cameron <hcphoon01@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hcphoon01/VATBot/issues"
+  },
+  "homepage": "https://github.com/hcphoon01/VATBot#readme",
+  "dependencies": {
+    "discord.js": "^11.5.1",
+    "discord.js-commando": "github:discordjs/Commando"
+  }
+}
