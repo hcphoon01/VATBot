@@ -2,7 +2,7 @@
   "name": "vatbot",
   "version": "1.0.0",
   "description": "A Discord Bot for the VATSIM Network",
-  "main": "index.js",
+  "main": "src/bot.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -22,7 +22,14 @@
   },
   "homepage": "https://github.com/hcphoon01/VATBot#readme",
   "dependencies": {
-    "discord.js": "^11.5.1",
-    "discord.js-commando": "github:discordjs/Commando"
+    "ascii-table": "0.0.9",
+    "discord.js": "github:discordjs/discord.js",
+    "dotenv": "^8.2.0",
+    "klasa": "github:dirigeants/klasa#master",
+    "request": "^2.88.0",
+    "sequelize": "^5.21.3"
+  },
+  "devDependencies": {
+    "node-dev": "^4.0.0"
   }
 }
