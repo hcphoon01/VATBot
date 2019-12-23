@@ -35,7 +35,7 @@ class AirportDatabaseUpdate {
     const sql = `
     CREATE TABLE IF NOT EXISTS airports (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      icao STRING ,
+      icao STRING UNIQUE,
       latitude INTEGER,
       longitude INTEGER)`;
     return this.run(sql);
@@ -66,18 +66,26 @@ class AirportDatabaseUpdate {
     const file = "http://ourairports.com/data/airports.csv";
     request(file)
       .pipe(csv())
-      .on("data", row => {
+      .on("data", async row => {
         console.log(index);
         this.insert(index, row.ident, row.latitude_deg, row.longitude_deg);
         index++;
       })
-      .on('end', ()=> {
-          return 'done';
+      .on("end", () => {
+        console.log("done");
+        process.exit(1);
       });
+  }
+
+  // delete the airports table
+  async dropTable() {
+    const sql = `DROP TABLE airports`;
+    await this.run(sql);
+    return "dropped";
   }
 }
 
 const DBUpdate = new AirportDatabaseUpdate(
   path.resolve(__dirname, "../bwd/provider/sqlite/db.sqlite")
 );
-DBUpdate.update();
+DBUpdate.dropTable().then(DBUpdate.update());
