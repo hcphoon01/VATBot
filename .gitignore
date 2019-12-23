@@ -62,3 +62,4 @@ typings/
 
 # Klasa files
 src/bwd/*
+src/commands/testing

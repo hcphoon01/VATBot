@@ -1,10 +1,23 @@
-const { Client } = require('klasa');
+const { KlasaClient, Schema } = require("klasa");
 
-require('dotenv').config();
+require("dotenv").config();
 
-new Client({
-  prefix: '!',
+const client = new KlasaClient({
+  prefix: "!",
   commandEditing: true,
   typing: true,
-  readyMessage: (client) => `Successfully initialized. Ready to serve ${client.guilds.size} guilds.`
-}).login(process.env.DISCORD_TOKEN);
+  readyMessage: client =>
+    `Successfully initialized. Ready to serve ${client.guilds.size} guilds.`
+});
+
+client.gateways.register("airports", {
+  provider: "sqlite",
+  schema: new Schema()
+    .add("ICAO", "String")
+    .add("latitude", "Integer")
+    .add("longitude", "Integer")
+});
+
+client.login(process.env.DISCORD_TOKEN);
+
+client.schedule.create('AirportDatabaseUpdate', '* * * * *');
