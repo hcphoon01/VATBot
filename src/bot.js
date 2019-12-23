@@ -10,12 +10,12 @@ const client = new KlasaClient({
     `Successfully initialized. Ready to serve ${client.guilds.size} guilds.`
 });
 
-client.gateways.register("airports", {
+/*client.gateways.register("airports", {
   provider: "sqlite",
   schema: new Schema()
     .add("ICAO", "String")
     .add("latitude", "Integer")
     .add("longitude", "Integer")
-});
+});*/
 
 client.login(process.env.DISCORD_TOKEN);
