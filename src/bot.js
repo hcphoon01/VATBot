@@ -19,5 +19,3 @@ client.gateways.register("airports", {
 });
 
 client.login(process.env.DISCORD_TOKEN);
-
-client.schedule.create('AirportDatabaseUpdate', '* * * * *');
