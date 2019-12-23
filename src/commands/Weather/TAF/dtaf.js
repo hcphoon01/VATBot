@@ -8,10 +8,10 @@ module.exports = class extends Command {
      * if all options are default, you can omit the constructor completely
      */
     super(...args, {
-      name: "Decoded METAR",
-      aliases: ["dmetar"],
+      name: "Decoded TAF",
+      aliases: ["dtaf"],
       cooldown: 2,
-      description: "Get a decoded METAR for a given ICAO Code",
+      description: "Get a decoded TAF for a given ICAO Code",
       usage: "<ICAO:ICAO>",
       extendedHelp: "<> means an ICAO code is a required argument."
     });
@@ -20,7 +20,7 @@ module.exports = class extends Command {
   async run(message, [airport]) {
     if (airport == null) return message.reply("you must specify an ICAO code");
     request(
-      `https://api.checkwx.com/metar/${airport}/decoded`,
+      `https://api.checkwx.com/TAF/${airport}/decoded`,
       { headers: { "X-API-Key": process.env.WX_API }, json: true },
       (err, res, body) => {
         if (err) {
@@ -29,8 +29,8 @@ module.exports = class extends Command {
         if (body.results !== 0) {
           const embed = {
             embed: {
-              title: `Decoded METAR for ${airport}`,
-              description: `RAW METAR: ` + "`" + body.data[0].raw_text + "`",
+              title: `Decoded TAF for ${airport}`,
+              description: `RAW TAF: ` + "`" + body.data[0].raw_text + "`",
               color: 4691726,
               fields: [
                 {
@@ -79,7 +79,7 @@ module.exports = class extends Command {
           return message.channel.send(embed);
         } else {
           return message.reply(
-            `a METAR is not available for your requested airport ${airport}, please ensure you have entered a valid airport ICAO code`
+            `a TAF is not available for your requested airport ${airport}, please ensure you have entered a valid airport ICAO code`
           );
         }
       }
