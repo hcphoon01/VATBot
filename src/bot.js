@@ -1,4 +1,5 @@
-const { KlasaClient, Schema } = require("klasa");
+const { KlasaClient } = require("klasa");
+const DataHandler = require('vatsim-data-handler');
 
 require("dotenv").config();
 
@@ -10,12 +11,6 @@ const client = new KlasaClient({
     `Successfully initialized. Ready to serve ${client.guilds.size} guilds.`
 });
 
-/*client.gateways.register("airports", {
-  provider: "sqlite",
-  schema: new Schema()
-    .add("ICAO", "String")
-    .add("latitude", "Integer")
-    .add("longitude", "Integer")
-});*/
+client.handler = new DataHandler();
 
 client.login(process.env.DISCORD_TOKEN);

@@ -18,7 +18,7 @@ module.exports = class extends Command {
   }
 
   async run(message, [...airport]) {
-    if (airport == null) return message.reply("you must specify an ICAO code");
+    if (airport.length == 0) return message.reply("you must specify an ICAO code");
     if (airport.length == 1) {
       request(
         `https://api.checkwx.com/metar/${airport}`,

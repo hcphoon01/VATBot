@@ -18,7 +18,7 @@ module.exports = class extends Command {
   }
 
   async run(message, [airport]) {
-    if (airport == null) return message.reply("you must specify an ICAO code");
+    if (airport.length == 0) return message.reply("you must specify an ICAO code");
     request(
       `https://api.checkwx.com/taf/${airport}`,
       { headers: { "X-API-Key": process.env.WX_API }, json: true },
