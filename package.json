@@ -5,7 +5,7 @@
   "main": "src/bot.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "node-dev bot.js"
+    "dev": "node-dev src/bot.js"
   },
   "repository": {
     "type": "git",
@@ -25,7 +25,7 @@
     "ascii-table": "0.0.9",
     "bluebird": "^3.7.2",
     "csv-parser": "^2.3.2",
-    "discord.js": "github:discordjs/discord.js",
+    "discord.js": "github:discordjs/discord.js#master",
     "dotenv": "^8.2.0",
     "fs-nextra": "^0.4.7",
     "klasa": "github:dirigeants/klasa#master",
