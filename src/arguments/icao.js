@@ -5,6 +5,6 @@ module.exports = class extends Argument {
   run(arg, possible, message) {
     const result = regex.exec(arg);
     if (result) return arg.toUpperCase();
-    throw message.language.get('INVALID_ICAO_CODE', arg)
+    throw message.language.get('INVALID_ICAO_CODE', arg);
   }
 };
