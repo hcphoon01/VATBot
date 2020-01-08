@@ -15,7 +15,7 @@ module.exports = class extends Inhibitor {
 
   async run(message, command) {
     if (process.env.APP_ENV != "beta") return;
-    if (!message.member.roles.get("Tester")) {
+    if (!message.member.roles.find(r => r.name === "Tester")) {
       throw message.send("You are not a Tester");
     }
   }
