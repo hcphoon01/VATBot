@@ -1,13 +1,16 @@
-const { Command, util: { isFunction } } = require('klasa');
-const has = (obj, key) => Object.prototype.hasOwnProperty.call(obj, key);
+const { Command, RichDisplay, util: { isFunction } } = require('klasa');
+const { MessageEmbed, Permissions } = require('discord.js');
+
+const PERMISSIONS_RICHDISPLAY = new Permissions([Permissions.FLAGS.MANAGE_MESSAGES, Permissions.FLAGS.ADD_REACTIONS]);
+const time = 1000 * 60 * 3;
 
 module.exports = class extends Command {
 
 	constructor(...args) {
 		super(...args, {
-			aliases: ['commands'],
+			aliases: ['commands', 'cmd', 'cmds'],
 			guarded: true,
-			description: language => language.get('COMMAND_HELP_DESCRIPTION'),
+			description: (language) => language.get('COMMAND_HELP_DESCRIPTION'),
 			usage: '(Command:command)'
 		});
 
@@ -15,55 +18,88 @@ module.exports = class extends Command {
 			if (!arg || arg === '') return undefined;
 			return this.client.arguments.get('command').run(arg, possible, message);
 		});
+
+		// Cache the handlers
+		this.handlers = new Map();
 	}
 
 	async run(message, [command]) {
 		if (command) {
-			const info = [
+			return message.sendMessage([
 				`= ${command.name} = `,
 				isFunction(command.description) ? command.description(message.language) : command.description,
 				message.language.get('COMMAND_HELP_USAGE', command.usage.fullUsage(message)),
 				message.language.get('COMMAND_HELP_EXTENDED'),
 				isFunction(command.extendedHelp) ? command.extendedHelp(message.language) : command.extendedHelp
-			].join('\n');
-			return message.sendMessage(info, { code: 'asciidoc' });
-		}
-		const help = await this.buildHelp(message);
-		const categories = Object.keys(help);
-		const helpMessage = [];
-		for (let cat = 0; cat < categories.length; cat++) {
-			helpMessage.push(`**${categories[cat]} Commands**:`, '```asciidoc');
-			const subCategories = Object.keys(help[categories[cat]]);
-			for (let subCat = 0; subCat < subCategories.length; subCat++) helpMessage.push(`= ${subCategories[subCat]} =`, `${help[categories[cat]][subCategories[subCat]].join('\n')}\n`);
-			helpMessage.push('```', '\u200b');
+			], { code: 'asciidoc' });
 		}
 
-		return message.author.send(helpMessage, { split: { char: '\u200b' } })
-			.then(() => { if (message.channel.type !== 'dm') message.sendLocale('COMMAND_HELP_DM'); })
-			.catch(() => { if (message.channel.type !== 'dm') message.sendLocale('COMMAND_HELP_NODM'); });
+		if (!('all' in message.flags) && message.guild && message.channel.permissionsFor(this.client.user).has(PERMISSIONS_RICHDISPLAY)) {
+			// Finish the previous handler
+			const previousHandler = this.handlers.get(message.author.id);
+			if (previousHandler) previousHandler.stop();
+
+			const handler = await (await this.buildDisplay(message)).run(await message.send('Loading Commands...'), {
+				filter: (reaction, user) => user.id === message.author.id,
+				time
+			});
+			handler.on('end', () => this.handlers.delete(message.author.id));
+			this.handlers.set(message.author.id, handler);
+			return handler;
+		}
+
+		return message.author.send(await this.buildHelp(message), { split: { char: '\n' } })
+			.then(() => { if (message.channel.type !== 'dm') message.sendMessage(message.language.get('COMMAND_HELP_DM')); })
+			.catch(() => { if (message.channel.type !== 'dm') message.sendMessage(message.language.get('COMMAND_HELP_NODM')); });
 	}
 
 	async buildHelp(message) {
-		const help = {};
-
+		const commands = await this._fetchCommands(message);
 		const { prefix } = message.guildSettings;
-		const commandNames = [...this.client.commands.keys()];
-		const longest = commandNames.reduce((long, str) => Math.max(long, str.length), 0);
 
-		await Promise.all(this.client.commands.map((command) =>
-			this.client.inhibitors.run(message, command, true)
-				.then(() => {
-					if (!has(help, command.category)) help[command.category] = {};
-					if (!has(help[command.category], command.subCategory)) help[command.category][command.subCategory] = [];
-					const description = isFunction(command.description) ? command.description(message.language) : command.description;
-					help[command.category][command.subCategory].push(`${prefix}${command.name.padEnd(longest)} :: ${description}`);
-				})
-				.catch(() => {
-					// noop
-				})
+		const helpMessage = [];
+		for (const [category, list] of commands) {
+			helpMessage.push(`**${category} Commands**:\n`, list.map(this.formatCommand.bind(this, message, prefix, false)).join('\n'), '');
+		}
+
+		return helpMessage.join('\n');
+	}
+
+	async buildDisplay(message) {
+		const commands = await this._fetchCommands(message);
+		const { prefix } = message.guildSettings;
+		const display = new RichDisplay();
+		const color = message.member.displayColor;
+		for (const [category, list] of commands) {
+			display.addPage(new MessageEmbed()
+				.setTitle(`${category} Commands`)
+				.setColor(color)
+				.setDescription(list.map(this.formatCommand.bind(this, message, prefix, true)).join('\n'))
+			);
+		}
+
+		return display;
+	}
+
+	formatCommand(message, prefix, richDisplay, command) {
+		const description = isFunction(command.description) ? command.description(message.language) : command.description;
+		return richDisplay ? `• ${prefix}${command.name} → ${description}` : `• **${prefix}${command.name}** → ${description}`;
+	}
+
+	async _fetchCommands(message) {
+		const run = this.client.inhibitors.run.bind(this.client.inhibitors, message);
+		const commands = new Map();
+		await Promise.all(this.client.commands.map((command) => run(command, true)
+			.then(() => {
+				const category = commands.get(command.category);
+				if (category) category.push(command);
+				else commands.set(command.category, [command]);
+			}).catch(() => {
+				// noop
+			})
 		));
 
-		return help;
+		return commands;
 	}
 
 };

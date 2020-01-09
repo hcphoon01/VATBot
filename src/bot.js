@@ -7,8 +7,9 @@ const client = new KlasaClient({
   prefix: "!",
   commandEditing: true,
   typing: true,
+  provider: { engine: 'sqlite' },
   readyMessage: client =>
-    `Successfully initialized. Ready to serve ${client.guilds.size} guilds.`
+    `Successfully initialized. Ready to serve ${client.guilds.size} guilds.`,
 });
 
 client.handler = new DataHandler();

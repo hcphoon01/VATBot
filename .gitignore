@@ -63,4 +63,4 @@ typings/
 # Klasa files
 src/bwd/*
 src/commands/testing
-vatsimData.json
+*Data.json
