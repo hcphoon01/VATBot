@@ -65,8 +65,7 @@ module.exports = class extends Event {
       }
 
     async init() {
-      KlasaClient.defaultGuildSchema.add('notification', folder => folder
-        .add('channel', 'TextChannel'));
+      
     }
 
 };

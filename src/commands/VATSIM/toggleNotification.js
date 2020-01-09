@@ -13,19 +13,25 @@ module.exports = class extends Command {
             requiredPermissions: 'ADMINISTRATOR',
             subcommands: true,
             description: 'Toggle the notifications for when controllers connect to VATSIM.',
-            usage: '<enable|disable> (Channel:channel)',
+            usage: '<enable|disable> [Channel:channel]',
             usageDelim: ' '
         });
     }
 
     async enable(message, [channel]) {
-        await message.guild.settings.update('notification', channel, message.guild);
-        console.log('updated');
-        console.log(await this.client.providers.get('sqlite').getALL('guilds'));
+        if (message.mentions.channels.first()) {
+            await message.guild.settings.update('notification.channel', channel);
+            message.reply(`you have successfully enabled the notifications in ${message.guild.channels.get(channel.id).toString()}`);
+        }
+        else {
+            message.channel.send('You must mention a channel to enable the notifications in.');
+        }
+        
     }
 
     async disable(message) {
-
+        await message.guild.settings.reset('notification.channel');
+        message.reply('you have successfully disabled notifications');
     }
 
     async run(message, [...params]) {

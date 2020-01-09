@@ -28,7 +28,7 @@
     "discord.js": "github:discordjs/discord.js#master",
     "dotenv": "^8.2.0",
     "fs-nextra": "^0.4.7",
-    "klasa": "github:dirigeants/klasa#master",
+    "klasa": "github:dirigeants/klasa#settings",
     "request": "^2.88.0",
     "sequelize": "^5.21.3",
     "sqlite": "^3.0.3",
