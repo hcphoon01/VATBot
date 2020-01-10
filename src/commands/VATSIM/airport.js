@@ -10,29 +10,44 @@ module.exports = class extends Command {
     super(...args, {
       name: "Airport",
       description: "Get the activity for a given Airport ICAO code.",
-      usage: "<ICAO:ICAO>",
+      usage: "<ICAO:icao>",
       extendedHelp: "<> means an ICAO code is a required argument."
     });
   }
 
   async run(message, [airport]) {
-    this.client.handler.getAirportInfo(airport.toUpperCase()).then(val => {
+    this.client.handler.getAirportInfo(airport).then(val => {
       if (val.pilots.length == 0 && val.controllers.length == 0) return message.send(`There is no activity at your requested airport: ${airport.toUpperCase()}`);
-      let departureTable;
-      departureTable = new AsciiTable;
-      departureTable.setHeading('Callsign', 'Aircraft', 'Departure', 'Arrival');
-      let arrivalTable;
-      arrivalTable = new AsciiTable;
-      arrivalTable.setHeading('Callsign', 'Aircraft', 'Departure', 'Arrival');
-      let controllerTable;
-      controllerTable = new AsciiTable;
-      controllerTable.setHeading('Callsign', 'Frequency', 'Position');
-      val.controllers.forEach(controller => {
-        console.log(controller);
-        controllerTable.addRow(controller.callsign, this.parseFrequency(controller.frequency), this.parsePosition(controller.facility));
-      });
-      return message.channel.send('```' + controllerTable.toString() + '```');
+      var pilotTable = this.createPilotTable(val.pilots);
+      var controllerTable = this.createControllerTable(val.controllers);
+      if (pilotTable.__rows.length > 0 && controllerTable.__rows.length > 0) {
+        return message.channel.send('```' + pilotTable.toString() + '```\n```' + controllerTable.toString() + '```', {split: {prepend: '```', append: '```'}});
+      } else if (pilotTable.__rows.length == 0 && controllerTable.__rows.length > 0) {
+        return message.channel.send('```' + controllerTable.toString() + '```', {split: {prepend: '```', append: '```'}});
+      } else if (pilotTable.__rows.length > 0 && controllerTable.__rows.length == 0) {
+        return message.channel.send('```' + pilotTable.toString() + '```', {split: {prepend: '```', append: '```'}});
+      }
     });
+  }
+
+  createPilotTable(array) {
+    const table = new AsciiTable;
+    table.setTitle('Active Pilots');
+    table.setHeading('Callsign', 'Aircraft', 'Departure', 'Arrival');
+    array.forEach(pilot => {
+      table.addRow(pilot.callsign, pilot.plan.aircraft, pilot.plan.departure, pilot.plan.arrival);
+    });
+    return table;
+  }
+
+  createControllerTable(array) {
+    const table = new AsciiTable;
+    table.setTitle('Active Controllers');
+    table.setHeading('Callsign', 'Frequency', 'Position');
+    array.forEach(controller => {
+      table.addRow(controller.callsign, this.parseFrequency(controller.frequency), this.parsePosition(controller.facility));
+    });
+    return table;
   }
 
   parseFrequency(frequency) {
