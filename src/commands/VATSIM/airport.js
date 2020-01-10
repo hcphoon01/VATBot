@@ -8,6 +8,7 @@ module.exports = class extends Command {
      * if all options are default, you can omit the constructor completely
      */
     super(...args, {
+      cooldown: 5,
       name: "Airport",
       description: "Get the activity for a given Airport ICAO code.",
       usage: "<ICAO:icao>",
