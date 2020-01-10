@@ -20,7 +20,7 @@ module.exports = class extends Command {
 
     async enable(message, [channel]) {
         if (message.mentions.channels.first()) {
-            await message.guild.settings.update('notification.channel', channel);
+            await message.guild.settings.update('notify_channel', channel.id);
             message.reply(`you have successfully enabled the notifications in ${message.guild.channels.get(channel.id).toString()}`);
         }
         else {
@@ -30,7 +30,7 @@ module.exports = class extends Command {
     }
 
     async disable(message) {
-        await message.guild.settings.reset('notification.channel');
+        await message.guild.settings.reset('notify_channel');
         message.reply('you have successfully disabled notifications');
     }
 

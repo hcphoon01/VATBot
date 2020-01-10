@@ -7,14 +7,12 @@ const client = new KlasaClient({
   prefix: "!",
   commandEditing: true,
   typing: true,
-  provider: { engine: 'sqlite' },
+  providers: {default: 'sqlite'},
   readyMessage: client =>
     `Successfully initialized. Ready to serve ${client.guilds.size} guilds.`,
 });
 
-Client.defaultGuildSchema.add('notification', notifyFolder => {
-  notifyFolder.add('channel', 'channel');
-});
+Client.defaultGuildSchema.add('notify_channel', 'string');
 
 client.handler = new DataHandler();
 

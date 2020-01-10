@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
 const { KlasaClient, Event } = require('klasa');
 
-const channel = '549538230610165765';
+//const channel = '549538230610165765';
 
 module.exports = class extends Event {
 
@@ -18,7 +18,7 @@ module.exports = class extends Event {
     }
 
     async run() {
-        this.client.handler.on('newController', (data) => {
+        this.client.handler.on('newController', async (data) => {
             const embed = new Discord.MessageEmbed()
                 .setColor('#9BC10B')
                 .setTitle('New Controller Notification')
@@ -28,14 +28,15 @@ module.exports = class extends Event {
             data.forEach(controller => {
                 if (controller.callsign.includes('ATIS')) return;
                 if (controller.callsign.includes('OBS')) return;
-                if (controller.frequency == 99998) return;
+                if (!controller.callsign.match(/([A-Z]{4})(_)(.*)/)) return;
                 embed.addField(`Callsign: ${controller.callsign}`, `Frequency: ${this.parseFrequency(controller.frequency)}, Position: ${this.parsePosition(controller.facility)}`);
             });
             if (embed.fields.length > 1) {
-                this.client.channels.get(channel).send(embed);
-            }
-            
-                
+                const guildList = await this.client.providers.get('sqlite').getAll('guilds');
+                guildList.forEach(guild => {
+                  this.client.channels.get(guild.notify_channel).send(embed);
+                });
+            }    
         });
     }
 
@@ -65,7 +66,7 @@ module.exports = class extends Event {
       }
 
     async init() {
-      
+
     }
 
 };
