@@ -46,7 +46,7 @@ module.exports = class extends Command {
     table.setTitle('Active Controllers');
     table.setHeading('Callsign', 'Frequency', 'Position');
     array.forEach(controller => {
-      table.addRow(controller.callsign, this.parseFrequency(controller.frequency), this.parsePosition(controller.facility));
+      table.addRow(controller.callsign, this.parseFrequency(controller.frequency), this.parsePosition(controller.facility, controller.callsign));
     });
     return table;
   }
@@ -58,21 +58,29 @@ module.exports = class extends Command {
     return `${parsed[0]}.${parsed[1]}`;
   }
 
-  parsePosition(position) {
+  parsePosition(position, callsign) {
     const pos = position.toString();
     switch (pos) {
-      case '4':
-        return 'ATIS';
       case '2':
         return 'Delivery';
       case '3':
         return 'Ground';
-      case '4':
-        return 'Tower';
       case '5':
         return 'Approach';
       case '6':
         return 'Center';
+      case '4':
+        return this.parseTower(callsign);
+      default:
+        return this.parseTower(callsign);
+    }
+  }
+
+  parseTower(callsign) {
+    if (callsign.includes('ATIS')) {
+      return 'ATIS';
+    } else if (callsign.includes('TWR')) {
+      return 'Tower';
     }
   }
 
