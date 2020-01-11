@@ -23,7 +23,7 @@ module.exports = class extends Command {
             if (atis) {
                 return message.channel.send('```' + atis.atis + '```');
             } else {
-                return message.channel.send('No ATIS has been found for your selected airport ```' + airport.toUpperCase() + '```');
+                return message.channel.send('No ATIS has been found for your selected airport `' + airport.toUpperCase() + '`');
             }
         });
     }
