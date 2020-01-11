@@ -12,7 +12,7 @@ module.exports = class extends Command {
       aliases: ["dmetar"],
       cooldown: 2,
       description: "Get a decoded METAR for a given ICAO Code",
-      usage: "<ICAO:ICAO>",
+      usage: "<ICAO:icao>",
       extendedHelp: "<> means an ICAO code is a required argument."
     });
   }

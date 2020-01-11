@@ -12,7 +12,7 @@ module.exports = class extends Command {
       description: "Get the TAF for a given airport ICAO/given airport ICAOs",
       extendedHelp:
         "<> means an ICAO code is a required argument and [...] means multiple codes can be passed with the command",
-      usage: "<ICAO:ICAO>",
+      usage: "<ICAO:icao>",
       usageDelim: " "
     });
   }

@@ -12,7 +12,7 @@ module.exports = class extends Command {
       aliases: ["dtaf"],
       cooldown: 2,
       description: "Get a decoded TAF for a given ICAO Code",
-      usage: "<ICAO:ICAO>",
+      usage: "<ICAO:icao>",
       extendedHelp: "<> means an ICAO code is a required argument."
     });
   }
