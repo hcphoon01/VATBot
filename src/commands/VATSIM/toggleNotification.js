@@ -10,7 +10,7 @@ module.exports = class extends Command {
         super(...args, {
             name: "Notification",
             cooldown: 10,
-            requiredPermissions: 'ADMINISTRATOR',
+            requiredPermissions: 'MANAGE_CHANNEL',
             subcommands: true,
             description: 'Toggle the notifications for when controllers connect to VATSIM.',
             usage: '<enable|disable> [Channel:channel]',
