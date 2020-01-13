@@ -16,4 +16,8 @@ Client.defaultGuildSchema.add('notify_channel', 'string');
 
 client.handler = new DataHandler();
 
+client.updateActivity = function() {
+  client.handler.getCount('all').then(val => client.user.setActivity(`over ${val} users | !help`, {type: 'WATCHING'}));
+};
+
 client.login(process.env.DISCORD_TOKEN);
