@@ -1,4 +1,5 @@
 const { Command } = require('klasa');
+const { MessageEmbed } = require('discord.js');
 
 module.exports = class extends Command {
 
@@ -21,7 +22,12 @@ module.exports = class extends Command {
                 if (controller.callsign.includes('ATIS')) atis = controller;
             });
             if (atis) {
-                return message.channel.send('```' + atis.atis + '```');
+                const embed = new MessageEmbed()
+                    .setTitle(`ATIS for ${airport}`)
+                    .setColor('#47970E')
+                    .setDescription('```' + atis.atis + '```');
+                    
+                return message.channel.send(embed);
             } else {
                 return message.channel.send('No ATIS has been found for your selected airport `' + airport.toUpperCase() + '`');
             }
