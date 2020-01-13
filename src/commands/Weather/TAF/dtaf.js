@@ -1,4 +1,4 @@
-const { Command, RichDisplay } = require("klasa");
+const { Command, RichDisplay, Timestamp } = require("klasa");
 const { MessageEmbed } = require('discord.js');
 const request = require("request");
 const moment = require('moment');
@@ -19,6 +19,8 @@ module.exports = class extends Command {
       usage: "<ICAO:icao>",
       extendedHelp: "<> means an ICAO code is a required argument."
     });
+
+    this.timestamp = new Timestamp('DD/MM/YYYY HH:mm');
   }
 
   async run(message, [airport]) {
@@ -35,15 +37,14 @@ module.exports = class extends Command {
             .setTitle(`Decoded TAF for ${airport}`)
             .setDescription('RAW TAF: ' + "`" + body.data[0].raw_text + "`")
             .setColor('#47970E')
-            .addField('Forecast', `From: ${moment(body.data[0].timestamp.from).format('DD/MM/YYYY HH:mm')}z to: ${moment(body.data[0].timestamp.to).format('DD/MM/YYYY HH:mm')}z`)
+            .addField('Forecast', `From: ${this.timestamp.display(body.data[0].timestamp.from)}z to: ${this.timestamp.display(body.data[0].timestamp.to)}z`)
           );
 
           var forecastArray = Object.values(body.data[0].forecast);
           forecastArray.forEach(forecast => {
             if (forecast.section_key == 0) return;
-            console.log(forecast); 
             display.addPage(template => {
-              template.addField(`${forecast.change.indicator.text}`, `${forecast.change.indicator.desc.replace(timeRegex, str => moment(str).format('DD/MM/YYYY HH:mm'))}`);
+              template.addField(`${forecast.change.indicator.text}`, `${forecast.change.indicator.desc.replace(timeRegex, str => this.timestamp.display(str))}`);
               try {
                 if (forecast.wind.gust_kts) {
                   template.addField('Wind', `${forecast.wind.degrees} Degrees ${forecast.wind.speed_kts} Knots ${forecast.wind.speed_mph} Miles per Hour. Gusting  ${forecast.wind.gust_kts} Knots ${forecast.wind.gust_kts} Miles per Hour`, true);
