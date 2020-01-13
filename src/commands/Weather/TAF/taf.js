@@ -1,5 +1,6 @@
 const { Command } = require("klasa");
 const AsciiTable = require("ascii-table");
+const { MessageEmbed } = require('discord.js');
 
 const request = require("request");
 require("dotenv").config();
@@ -27,9 +28,15 @@ module.exports = class extends Command {
           console.log(err);
         }
         if (body.results !== 0) {
-          return message.channel.send(
-            `The TAF for ${airport} is: ` + "`" + body.data[0] + "`"
-          );
+          const embed = new MessageEmbed()
+            .setTitle(`RAW TAF for ${airport}`)
+            .setColor('#47970E')
+            .setDescription('```' + body.data[0] + "```");
+          
+          return message.channel.send(embed);
+          // return message.channel.send(
+          //   `The TAF for ${airport} is: ` + "`" + body.data[0] + "`"
+          // );
         } else {
           return message.reply(
             `a TAF is not available for your requested airport ${airport}, please ensure you have entered a valid airport ICAO code`
