@@ -33,9 +33,11 @@ module.exports = class extends Event {
             });
             if (embed.fields.length > 1) {
                 const guildList = await this.client.providers.get('sqlite').getAll('guilds');
-                guildList.forEach(guild => {
-                  this.client.channels.get(guild.notify_channel).send(embed);
-                });
+                if (guildList.length > 0) {
+                  guildList.forEach(guild => {
+                    this.client.channels.get(guild.notify_channel).send(embed);
+                  });
+                }
             }    
         });
     }
