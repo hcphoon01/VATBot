@@ -182,7 +182,15 @@ module.exports = class extends Language {
 				"Connecting to the network is very simple but differs from client to client, you will most likely need your VATSIM CID and password which should have been sent to you upon registration. More detailed instructions on connecting can be found in the documents for your specific client.",
 				"",
 				"And thats it, you can now get yourself up and running on VATSIM, if you are nervous, do not worry. Just sit on the ground and 'observe' a frequency and you will soon work out what everything means."
-			]
+			],
+			DONATION_INFO: [
+				"As VATBot is free to use, there is no source of income for maintaining the hardware and software required to run it.",
+				"If you would like to contribute to the development and upkeep of VATBot but do not know how to code you can help by donating.",
+				"Any donations will go towards the development and maintance of VATBot and will be greatly appreciated.",
+				"The link to donate is here: https://www.paypal.me/hcphoon01",
+				"",
+				"Thank you to anyone who donates."
+			],
 		};
 	}
 
