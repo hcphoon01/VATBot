@@ -8,7 +8,7 @@ module.exports = class extends Command {
      * if all options are default, you can omit the constructor completely
      */
     super(...args, {
-      name: "Decoded METAR",
+      name: "dmetar",
       aliases: ["dmetar"],
       cooldown: 2,
       description: "Get a decoded METAR for a given ICAO Code",

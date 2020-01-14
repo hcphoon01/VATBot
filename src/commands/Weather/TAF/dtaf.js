@@ -12,8 +12,7 @@ module.exports = class extends Command {
      * if all options are default, you can omit the constructor completely
      */
     super(...args, {
-      name: "Decoded TAF",
-      aliases: ["dtaf"],
+      name: "dtaf",
       cooldown: 2,
       description: "Get a decoded TAF for a given ICAO Code",
       usage: "<ICAO:icao>",
