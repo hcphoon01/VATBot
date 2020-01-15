@@ -58,8 +58,10 @@ module.exports = class extends Command {
 		let prefix;
 		if (message.channel.type == 'dm') {
 			prefix = '!';
-		} else {
+		} else if (message.guildSettings.prefix) {
 			const { prefix } = message.guildSettings;
+		} else {
+			prefix = '!';
 		}
 
 		const helpMessage = [];
