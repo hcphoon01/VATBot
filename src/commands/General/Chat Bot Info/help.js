@@ -55,7 +55,12 @@ module.exports = class extends Command {
 
 	async buildHelp(message) {
 		const commands = await this._fetchCommands(message);
-		const { prefix } = message.guildSettings;
+		let prefix;
+		if (message.channel.type == 'dm') {
+			prefix = '!';
+		} else {
+			const { prefix } = message.guildSettings;
+		}
 
 		const helpMessage = [];
 		for (const [category, list] of commands) {
