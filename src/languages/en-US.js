@@ -191,6 +191,10 @@ module.exports = class extends Language {
 				"",
 				"Thank you to anyone who donates."
 			],
+			BUG_INFO: [
+				"To report a bug you first need to join the VATBot Discord Server: https://discord.gg/Htzybqa",
+				"Then head to the #bug-report channel, click the reaction on the message, go to the created channel which should be #ticket-xxxx where `xxxx` is the number of your ticket, and report your bug."
+			],
 		};
 	}
 
