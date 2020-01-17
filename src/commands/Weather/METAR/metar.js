@@ -1,6 +1,5 @@
 const { Command } = require("klasa");
 const { MessageEmbed } = require('discord.js');
-const AsciiTable = require('ascii-table');
 
 const request = require("request");
 require("dotenv").config();
@@ -43,20 +42,22 @@ module.exports = class extends Command {
         }
       );
     } else {
+      const formatAirport = airport.join(",");
       request(
-        `https://api.checkwx.com/metar/${airport.join(",")}`,
+        `https://api.checkwx.com/metar/${formatAirport}`,
         { headers: { "X-API-Key": process.env.WX_API }, json: true },
         (err, res, body) => {
           if (err) {
             console.log(err);
           }
           if (body.results !== 0) {
-            const table = new AsciiTable("METAR Results");
-            table.setHeading("ICAO", "METAR");
-            body.data.forEach(result => {
-              table.addRow(result.substr(0, result.indexOf(" ")), result);
+            const embed = new MessageEmbed()
+              .setTitle(`METAR Results`)
+              .setColor('#47970E');
+            body.data.forEach((result, i) => {
+              embed.addField(airport[i], '```' + result + '```');
             });
-            return message.channel.send("```" + table.toString() + "```");
+            return message.channel.send(embed);
           } else {
             return message.reply(
               `a METAR is not available for your requested airports ${airport.join(

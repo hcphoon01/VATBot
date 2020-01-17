@@ -1,6 +1,5 @@
 const { Command } = require("klasa");
 const { MessageEmbed } = require('discord.js');
-const AsciiTable = require('ascii-table');
 
 const request = require("request");
 require("dotenv").config();
