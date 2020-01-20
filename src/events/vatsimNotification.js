@@ -35,7 +35,12 @@ module.exports = class extends Event {
                 const guildList = await this.client.providers.get('sqlite').getAll('guilds');
                 if (guildList.length > 0) {
                   guildList.forEach(guild => {
-                    this.client.channels.get(guild.notify_channel).send(embed);
+                    try {
+                      this.client.channels.get(guild.notify_channel).send(embed);
+                    }
+                    catch (e) {
+                      // Do nothing
+                    }
                   });
                 }
             }    
