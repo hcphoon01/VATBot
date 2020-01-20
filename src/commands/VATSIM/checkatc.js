@@ -14,6 +14,7 @@ module.exports = class extends Command {
             description: 'Get an estimate of the ATC between 2 airports',
             usage: '<departure:icao> <arrival:icao>',
             usageDelim: ' ',
+            enabled: false,
         });
     }
 
