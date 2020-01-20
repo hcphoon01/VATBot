@@ -1,4 +1,6 @@
-const { Command } = require('klasa');
+const { Command, RichDisplay } = require('klasa');
+const { MessageEmbed } = require('discord.js');
+const AsciiTable = require('ascii-table');
 
 module.exports = class extends Command {
 
@@ -12,12 +14,13 @@ module.exports = class extends Command {
             description: 'Get an estimate of the ATC between 2 airports',
             usage: '<departure:icao> <arrival:icao>',
             usageDelim: ' ',
-            enabled: false,
         });
     }
 
     async run(message, [...params]) {
-        let controllerList = [];
+        let departureList = [];
+        let arrivalList = [];
+        let enrouteList = [];
         let departureAirport;
         let arrivalAirport;
 
@@ -31,7 +34,7 @@ module.exports = class extends Command {
                 arrivalAirport = airport;
             }
         });
-        this.client.handler.getControllers().then(val => {
+        this.client.handler.getControllers().then(async val => {
             const line = {
                 p1: {
                     x: departureAirport.longitude,
@@ -43,8 +46,11 @@ module.exports = class extends Command {
                 }
             };
             val.forEach(result => {
-                if (result.callsign.includes(params[0]) || result.callsign.includes(params[1])) {
-                    controllerList.push(result);
+                if (result.callsign.includes(params[0])) {
+                    departureList.push(result);
+                    return;
+                } else if (result.callsign.includes(params[1])) {
+                    arrivalList.push(result);
                     return;
                 } else if (positions.includes(result.facility)) {
                     return;
@@ -56,11 +62,41 @@ module.exports = class extends Command {
                         y: result.latitude
                     }
                 };
-                if (this.circleDistFromLineSeg(circle, line) < 1) {
-                    controllerList.push(result);
+                if (this.circleDistFromLineSeg(circle, line) < 3) {
+                    enrouteList.push(result);
                 }
             });
-            console.log(controllerList);
+            const display = new RichDisplay(new MessageEmbed()
+                .setTitle(`Current ATC between ${params[0]} and ${params[1]}`)
+                .setColor('#47970E')
+                .setDescription(`Please remember that this is just a rough estimate using controllers range rings not defined FIRs`));
+            
+            display.addPage(template => {
+                if (departureList.length > 0 ) {
+                    template.addField('Departure Controllers', '```' + this.createTable(departureList) + '```');
+                } else {
+                    template.addField('Departure Controllers', `No Controllers at your Departure Airport: ${params[0]}`);
+                }
+                return template;
+            });
+            display.addPage(template => {
+                if (enrouteList.length > 0 ) {
+                    template.addField('En-Route Controllers', '```' + this.createTable(enrouteList) + '```');
+                } else {
+                    template.addField('En-Route Controllers', `There are no En-Route Controllers between your 2 Airports`);
+                }
+                return template;
+            });
+            display.addPage(template => {
+                if (arrivalList.length > 0 ) {
+                    template.addField('Arrival Controllers', '```' + this.createTable(arrivalList) + '```');
+                } else {
+                    template.addField('Arrival Controllers', `No Controllers at your Arrival Airport: ${params[1]}`);
+                }
+                return template;
+            });
+
+            return display.run(await message.send('Loading Controllers...'));
         });
     }
 
@@ -71,6 +107,48 @@ module.exports = class extends Command {
          */
     }
 
+    createTable(list) {
+        const table = new AsciiTable();
+        table.setHeading('Callsign', 'Frequency', 'Position');
+        list.forEach(controller => {
+            table.addRow(controller.callsign, this.parseFrequency(controller.frequency), this.parsePosition(controller.facility, controller.callsign));
+        });
+        return table.toString();
+    }
+
+    parseFrequency(frequency) {
+        const freq = frequency.toString();
+        const parsed = [freq.slice(0, 2), freq.slice(2)];
+        parsed[0] = '1' + parsed[0];
+        return `${parsed[0]}.${parsed[1]}`;
+      }
+    
+    parsePosition(position, callsign) {
+        const pos = position.toString();
+        switch (pos) {
+            case '2':
+            return 'Delivery';
+            case '3':
+            return 'Ground';
+            case '5':
+            return 'Approach';
+            case '6':
+            return 'Center';
+            case '4':
+            return this.parseTower(callsign);
+            default:
+            return this.parseTower(callsign);
+        }
+    }
+
+    parseTower(callsign) {
+        if (callsign.includes('ATIS')) {
+            return 'ATIS';
+        } else if (callsign.includes('TWR')) {
+            return 'Tower';
+        }
+    }
+      
     circleDistFromLineSeg(circle,line){
         var v1, v2, v3, u;
         v1 = {};
