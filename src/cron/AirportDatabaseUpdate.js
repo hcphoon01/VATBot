@@ -33,7 +33,7 @@ class AirportDatabaseUpdate {
   // create the airports table if it doesnt exist
   createTable() {
     const sql = `
-    CREATE TABLE IF NOT EXISTS airports (
+    CREATE TABLE IF NOT EXISTS temp_airports (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       icao STRING UNIQUE,
       latitude INTEGER,
@@ -44,7 +44,7 @@ class AirportDatabaseUpdate {
   // insert data
   insert(id, icao, latitude, longitude) {
     const sql = `
-      INSERT INTO airports (id, icao, latitude, longitude)
+      INSERT INTO temp_airports (id, icao, latitude, longitude)
       VALUES (?, ?, ?, ?)`;
     return this.run(sql, [id, icao, latitude, longitude]);
   }
@@ -52,7 +52,7 @@ class AirportDatabaseUpdate {
   // fetch last ID
   async fetchLastId() {
     const sql = `
-      SELECT id FROM airports ORDER BY id DESC LIMIT 0, 1`;
+      SELECT id FROM temp_airports ORDER BY id DESC LIMIT 0, 1`;
     const result = await this.run(sql);
     if (result.id == 0) return 1;
     else {
@@ -67,14 +67,22 @@ class AirportDatabaseUpdate {
     request(file)
       .pipe(csv())
       .on("data", async row => {
-        console.log(index);
         this.insert(index, row.ident, row.latitude_deg, row.longitude_deg);
         index++;
       })
-      .on("end", () => {
+      .on("end", async () => {
         console.log("done");
+        await this.dropTable();
+        await this.renameTable();
         process.exit(1);
       });
+  }
+
+  // rename temp table
+  async renameTable() {
+    const sql = `ALTER TABLE temp_airports RENAME TO airports`;
+    await this.run(sql);
+    return "renamed";
   }
 
   // delete the airports table
@@ -83,9 +91,20 @@ class AirportDatabaseUpdate {
     await this.run(sql);
     return "dropped";
   }
+
+  // check to see if airports table exists
+  async checkTable() {
+    const sql = `SELECT name FROM sqlite_master WHERE type='table' AND name='airports'`;
+    const result = await this.run(sql);
+    if (result.id == 0) {
+      return false;
+    } else {
+      return true;
+    }
+  }
 }
 
 const DBUpdate = new AirportDatabaseUpdate(
   path.resolve(__dirname, "../bwd/provider/sqlite/db.sqlite")
 );
-DBUpdate.dropTable().then(DBUpdate.update());
+DBUpdate.update();
