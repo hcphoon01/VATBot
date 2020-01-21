@@ -33,7 +33,7 @@ class AirportDatabaseUpdate {
   // create the airports table if it doesnt exist
   createTable() {
     const sql = `
-    CREATE TABLE IF NOT EXISTS temp_airports (
+    CREATE TABLE IF NOT EXISTS airports (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       icao STRING UNIQUE,
       latitude INTEGER,
@@ -44,7 +44,7 @@ class AirportDatabaseUpdate {
   // insert data
   insert(id, icao, latitude, longitude) {
     const sql = `
-      INSERT INTO temp_airports (id, icao, latitude, longitude)
+      INSERT INTO airports (id, icao, latitude, longitude)
       VALUES (?, ?, ?, ?)`;
     return this.run(sql, [id, icao, latitude, longitude]);
   }
@@ -52,7 +52,7 @@ class AirportDatabaseUpdate {
   // fetch last ID
   async fetchLastId() {
     const sql = `
-      SELECT id FROM temp_airports ORDER BY id DESC LIMIT 0, 1`;
+      SELECT id FROM airports ORDER BY id DESC LIMIT 0, 1`;
     const result = await this.run(sql);
     if (result.id == 0) return 1;
     else {
@@ -61,33 +61,33 @@ class AirportDatabaseUpdate {
   }
   // start the update
   async update() {
+    await this.dropTable();
     await this.createTable();
     var index = await this.fetchLastId();
     const file = "http://ourairports.com/data/airports.csv";
+    console.log('file fetched');
     request(file)
       .pipe(csv())
-      .on("data", async row => {
+      .on("data", row => {
         this.insert(index, row.ident, row.latitude_deg, row.longitude_deg);
         index++;
       })
       .on("end", async () => {
         console.log("done");
-        await this.dropTable();
-        await this.renameTable();
         process.exit(1);
       });
   }
 
   // rename temp table
-  async renameTable() {
-    const sql = `ALTER TABLE temp_airports RENAME TO airports`;
-    await this.run(sql);
-    return "renamed";
-  }
+  // async renameTable() {
+  //   const sql = `ALTER TABLE temp_airports RENAME TO airports`;
+  //   await this.run(sql);
+  //   return "renamed";
+  // }
 
   // delete the airports table
   async dropTable() {
-    const sql = `DROP TABLE airports`;
+    const sql = `DROP TABLE IF EXISTS airports`;
     await this.run(sql);
     return "dropped";
   }
@@ -108,3 +108,4 @@ const DBUpdate = new AirportDatabaseUpdate(
   path.resolve(__dirname, "../bwd/provider/sqlite/db.sqlite")
 );
 DBUpdate.update();
+
