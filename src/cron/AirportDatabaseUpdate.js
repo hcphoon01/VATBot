@@ -66,13 +66,21 @@ class AirportDatabaseUpdate {
     var index = await this.fetchLastId();
     const file = "http://ourairports.com/data/airports.csv";
     console.log('file fetched');
+    var data = [];
     request(file)
       .pipe(csv())
       .on("data", row => {
-        this.insert(index, row.ident, row.latitude_deg, row.longitude_deg);
-        index++;
+        // this.insert(index, row.ident, row.latitude_deg, row.longitude_deg);
+        // index++;
+        data.push(row);
       })
-      .on("end", async () => {
+      .on("end", () => {
+        console.log("all fetched, starting insert");
+        data.forEach(item => {
+          this.insert(index, item.ident, item.latitude_deg, item.longitude_deg);
+          index++;
+          console.log(index);
+        });
         console.log("done");
         process.exit(1);
       });
