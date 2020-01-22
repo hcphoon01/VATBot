@@ -23,6 +23,7 @@
   "homepage": "https://github.com/hcphoon01/VATBot#readme",
   "dependencies": {
     "ascii-table": "0.0.9",
+    "better-sqlite3": "^5.4.3",
     "bluebird": "^3.7.2",
     "csv-parser": "^2.3.2",
     "discord.js": "github:discordjs/discord.js#master",
