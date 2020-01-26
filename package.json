@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/hcphoon01/VATBot#readme",
   "dependencies": {
+    "@hcphoon01/leaflet-headless": "github:hcphoon01/leaflet-headless",
     "ascii-table": "0.0.9",
     "better-sqlite3": "^5.4.3",
     "bluebird": "^3.7.2",
@@ -30,6 +31,7 @@
     "dotenv": "^8.2.0",
     "fs-nextra": "^0.4.7",
     "klasa": "github:dirigeants/klasa#settings",
+    "leaflet-image": "^0.4.0",
     "moment": "^2.24.0",
     "request": "^2.88.0",
     "sequelize": "^5.21.3",
