@@ -20,24 +20,24 @@ module.exports = class extends Command {
             const display = new RichDisplay(new MessageEmbed()
                 .setTitle(val.callsign)
                 .setColor('#47970E')
-                .setAuthor(val.member.name)
+                .setAuthor(val.realname)
             );
             display.addPage(template => {
-                template.addField('Speed', val.speed, true)
+                template.addField('Speed', val.groundspeed, true)
                 .addField('Altitude', val.altitude, true)
                 .addField('Heading', val.heading, true);
                 return template;
             });
 
-            if (val.plan) {
+            if (val.planned_aircraft) {
                 display.addPage(template => {
-                    template.addField('Departure', val.plan.departure, true)
-                    .addField('Arrival', val.plan.arrival, true);
-                    if (val.plan.alternate) {
-                        template.addField('Alternate', val.plan.alternate, true);
+                    template.addField('Departure', val.planned_depairport, true)
+                    .addField('Arrival', val.planned_destairport, true);
+                    if (val.planned_altairport) {
+                        template.addField('Alternate', val.planned_altairport, true);
                     }
-                    template.addField('Aircraft', val.plan.aircraft)
-                    .addField('Route', val.plan.route);
+                    template.addField('Aircraft', val.planned_aircraft)
+                    .addField('Route', val.planned_route);
 
                     return template;
                 });
