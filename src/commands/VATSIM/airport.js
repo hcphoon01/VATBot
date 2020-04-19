@@ -36,7 +36,7 @@ module.exports = class extends Command {
     table.setTitle('Active Pilots');
     table.setHeading('Callsign', 'Aircraft', 'Departure', 'Arrival');
     array.forEach(pilot => {
-      table.addRow(pilot.callsign, pilot.plan.aircraft, pilot.plan.departure, pilot.plan.arrival);
+      table.addRow(pilot.callsign, pilot.planned_aircraft, pilot.planned_depairport, pilot.planned_destairport);
     });
     return table;
   }
@@ -46,7 +46,7 @@ module.exports = class extends Command {
     table.setTitle('Active Controllers');
     table.setHeading('Callsign', 'Frequency', 'Position');
     array.forEach(controller => {
-      table.addRow(controller.callsign, this.parseFrequency(controller.frequency), this.parsePosition(controller.facility, controller.callsign));
+      table.addRow(controller.callsign, this.parseFrequency(controller.frequency), this.parsePosition(controller.facilitytype, controller.callsign));
     });
     return table;
   }
