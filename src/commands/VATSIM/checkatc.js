@@ -10,6 +10,7 @@ module.exports = class extends Command {
          * if all options are default, you can omit the constructor completely
          */
         super(...args, {
+            enabled: false,
             cooldown: 5,
             description: 'Get an estimate of the ATC between 2 airports',
             usage: '<departure:icao> <arrival:icao>',
