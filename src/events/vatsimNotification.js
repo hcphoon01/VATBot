@@ -11,7 +11,7 @@ module.exports = class extends Event {
          * if all options are default, you can omit the constructor completely
          */
         super(...args, {
-            enabled: true,
+            enabled: false,
             once: false,
             event: 'klasaReady'
         });
