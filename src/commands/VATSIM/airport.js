@@ -46,16 +46,9 @@ module.exports = class extends Command {
     table.setTitle('Active Controllers');
     table.setHeading('Callsign', 'Frequency', 'Position');
     array.forEach(controller => {
-      table.addRow(controller.callsign, this.parseFrequency(controller.frequency), this.parsePosition(controller.facilitytype, controller.callsign));
+      table.addRow(controller.callsign, controller.frequency, this.parsePosition(controller.facilitytype, controller.callsign));
     });
     return table;
-  }
-
-  parseFrequency(frequency) {
-    const freq = frequency.toString();
-    const parsed = [freq.slice(0, 2), freq.slice(2)];
-    parsed[0] = '1' + parsed[0];
-    return `${parsed[0]}.${parsed[1]}`;
   }
 
   parsePosition(position, callsign) {
