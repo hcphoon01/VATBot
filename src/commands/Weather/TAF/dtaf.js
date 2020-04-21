@@ -40,10 +40,13 @@ module.exports = class extends Command {
           );
 
           var forecastArray = Object.values(body.data[0].forecast);
-          forecastArray.forEach(forecast => {
-            if (forecast.section_key == 0) return;
+
+          for (let i = 0; i < forecastArray.length; i++) {
+            const forecast = forecastArray[i];
             display.addPage(template => {
-              template.addField(`${forecast.change.indicator.text}`, `${forecast.change.indicator.desc.replace(timeRegex, str => this.timestamp.display(str))}`);
+              if (i != 0) {
+                template.addField(`${forecast.change.indicator.text}`, `${forecast.change.indicator.desc.replace(timeRegex, str => this.timestamp.display(str))}`);
+              }
               try {
                 if (forecast.wind.gust_kts) {
                   template.addField('Wind', `${forecast.wind.degrees} Degrees ${forecast.wind.speed_kts} Knots ${forecast.wind.speed_mph} Miles per Hour. Gusting  ${forecast.wind.gust_kts} Knots ${forecast.wind.gust_kts} Miles per Hour`, true);
@@ -54,11 +57,15 @@ module.exports = class extends Command {
               
               if (forecast.wind && !forecast.wind.gust_kts) {
                 template.addField('Wind', `${forecast.wind.degrees} Degrees ${forecast.wind.speed_kts} Knots ${forecast.wind.speed_mph} Miles per Hour.`, true);
-              } if (forecast.visibility) { 
-                template.addField('Visibility', `${forecast.visibility.miles} Miles ${forecast.visibility.meters} Meters`, true);
+              } if (forecast.visibility) {
+                template.addField('Visibility', `${forecast.visibility.meters} Meters`, true);
               } if (forecast.clouds.length > 0) {
                 forecast.clouds.forEach(cloud => {
-                  template.addField('Clouds', `${cloud.text} ${cloud.base_feet_agl} Feet ${cloud.base_meters_agl} Meters`);
+                  if(cloud.code == 'NSC') {
+                    template.addField('Clouds', `${cloud.text}`);
+                  } else {
+                    template.addField('Clouds', `${cloud.text} ${cloud.base_feet_agl} Feet ${cloud.base_meters_agl} Meters`);
+                  }
                 });
               } if (forecast.conditions.length > 0) {
                 forecast.conditions.forEach(condition => {
@@ -67,7 +74,7 @@ module.exports = class extends Command {
               }
               return template;
             });
-          });
+          }
 
           return display.run(await message.send('Loading TAF...'));
         }
