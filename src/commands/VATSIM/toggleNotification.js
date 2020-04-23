@@ -8,7 +8,7 @@ module.exports = class extends Command {
          * if all options are default, you can omit the constructor completely
          */
         super(...args, {
-            enabled: false,
+            enabled: true,
             name: "Notification",
             cooldown: 10,
             permissionLevel: 6,
@@ -22,7 +22,7 @@ module.exports = class extends Command {
     async enable(message, [channel]) {
         if (message.mentions.channels.first()) {
             await message.guild.settings.update('notify_channel', channel.id);
-            message.reply(`you have successfully enabled the notifications in ${message.guild.channels.get(channel.id).toString()}`);
+            message.reply(`you have successfully enabled the notifications in ${message.guild.channels.cache.get(channel.id).toString()}`);
         }
         else {
             message.channel.send('You must mention a channel to enable the notifications in.');
