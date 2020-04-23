@@ -43,7 +43,6 @@ module.exports = class extends Command {
         contentArray.push(controllerTable.toString());
       }
       var content = contentArray.join('```\n```');
-      console.log(content);
       return message.channel.send('```' + content + '```', {split: {char: '```\n```',prepend: '```', append: '```'}});
     });
   }
