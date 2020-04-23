@@ -19,21 +19,38 @@ module.exports = class extends Command {
   async run(message, [airport]) {
     this.client.handler.getAirportInfo(airport).then(val => {
       if (val.pilots.length == 0 && val.controllers.length == 0) return message.send(`There is no activity at your requested airport: ${airport.toUpperCase()}`);
-      var pilotTable = this.createPilotTable(val.pilots);
-      var controllerTable = this.createControllerTable(val.controllers);
-      if (pilotTable.__rows.length > 0 && controllerTable.__rows.length > 0) {
-        return message.channel.send('```' + pilotTable.toString() + '```\n```' + controllerTable.toString() + '```', {split: {prepend: '```', append: '```'}});
-      } else if (pilotTable.__rows.length == 0 && controllerTable.__rows.length > 0) {
-        return message.channel.send('```' + controllerTable.toString() + '```', {split: {prepend: '```', append: '```'}});
-      } else if (pilotTable.__rows.length > 0 && controllerTable.__rows.length == 0) {
-        return message.channel.send('```' + pilotTable.toString() + '```', {split: {prepend: '```', append: '```'}});
+      var depArray = [];
+      var arrArray = [];
+      for (let i = 0; i < val.pilots.length; i++) {
+        const pilot = val.pilots[i];
+        if (pilot.planned_depairport == airport) {
+          depArray.push(pilot);
+        } else if (pilot.planned_destairport == airport) {
+          arrArray.push(pilot);
+        }
       }
+      var depsTable = this.createPilotTable('Departures', depArray);
+      var arrTable = this.createPilotTable('Arrivals', arrArray);
+      var controllerTable = this.createControllerTable(val.controllers);
+      var contentArray = [];
+      if (depsTable.__rows.length > 0) {
+        contentArray.push(depsTable.toString());
+      }
+      if (arrTable.__rows.length > 0) {
+        contentArray.push(arrTable.toString());
+      }
+      if (controllerTable.__rows.length > 0) {
+        contentArray.push(controllerTable.toString());
+      }
+      var content = contentArray.join('```\n```');
+      console.log(content);
+      return message.channel.send('```' + content + '```', {split: {char: '```\n```',prepend: '```', append: '```'}});
     });
   }
 
-  createPilotTable(array) {
+  createPilotTable(type, array) {
     const table = new AsciiTable;
-    table.setTitle('Active Pilots');
+    table.setTitle(`Active ${type}`);
     table.setHeading('Callsign', 'Aircraft', 'Departure', 'Arrival');
     array.forEach(pilot => {
       table.addRow(pilot.callsign, pilot.planned_aircraft, pilot.planned_depairport, pilot.planned_destairport);
