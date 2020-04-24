@@ -10,7 +10,7 @@ module.exports = class extends Command {
          * if all options are default, you can omit the constructor completely
          */
         super(...args, {
-            enabled: false,
+            enabled: true,
             cooldown: 5,
             description: 'Get an estimate of the ATC between 2 airports',
             usage: '<departure:icao> <arrival:icao>',
@@ -22,19 +22,19 @@ module.exports = class extends Command {
         let departureList = [];
         let arrivalList = [];
         let enrouteList = [];
-        let departureAirport;
-        let arrivalAirport;
 
         const positions = [2, 3, 4, 5];
         
-        const airports = await this.client.providers.get('sqlite').getAll('airports');
-        airports.forEach(airport => {
-            if (airport.icao == params[0]) {
-                departureAirport = airport;
-            } else if (airport.icao == params[1]) {
-                arrivalAirport = airport;
-            }
-        });
+        //const airports = await this.client.providers.get('json').getAll('airports');
+        const departureAirport = await this.client.providers.get('json').get('airports', params[0]);
+        const arrivalAirport = await this.client.providers.get('json').get('airports', params[1]);
+        // airports.forEach(airport => {
+        //     if (airport.icao == params[0]) {
+        //         departureAirport = airport;
+        //     } else if (airport.icao == params[1]) {
+        //         arrivalAirport = airport;
+        //     }
+        // });
         this.client.handler.getControllers().then(async val => {
             const line = {
                 p1: {
@@ -53,7 +53,7 @@ module.exports = class extends Command {
                 } else if (result.callsign.includes(params[1])) {
                     arrivalList.push(result);
                     return;
-                } else if (positions.includes(result.facility)) {
+                } else if (positions.includes(result.facilitytype)) {
                     return;
                 }
                 const circle = {
@@ -112,17 +112,10 @@ module.exports = class extends Command {
         const table = new AsciiTable();
         table.setHeading('Callsign', 'Frequency', 'Position');
         list.forEach(controller => {
-            table.addRow(controller.callsign, this.parseFrequency(controller.frequency), this.parsePosition(controller.facility, controller.callsign));
+            table.addRow(controller.callsign, controller.frequency, this.parsePosition(controller.facilitytype, controller.callsign));
         });
         return table.toString();
     }
-
-    parseFrequency(frequency) {
-        const freq = frequency.toString();
-        const parsed = [freq.slice(0, 2), freq.slice(2)];
-        parsed[0] = '1' + parsed[0];
-        return `${parsed[0]}.${parsed[1]}`;
-      }
     
     parsePosition(position, callsign) {
         const pos = position.toString();
