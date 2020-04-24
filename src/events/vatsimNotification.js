@@ -48,7 +48,6 @@ module.exports = class extends Event {
     }
 
     async sendMessage(embed) {
-      console.log(embed);
       const guildList = await this.client.providers.get('json').getAll('guilds');
       if (guildList.length > 0) {
         guildList.forEach(guild => {
