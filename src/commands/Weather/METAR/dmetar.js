@@ -41,7 +41,7 @@ module.exports = class extends Command {
                 },
                 {
                   name: "Visibility",
-                  value: `${body.data[0].visibility.miles} miles ${body.data[0].visibility.meters} meters`,
+                  value: `${body.data[0].visibility.meters} meters`,
                   inline: true
                 },
                 {
