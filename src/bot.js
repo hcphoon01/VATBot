@@ -14,6 +14,8 @@ const client = new KlasaClient({
 
 Client.defaultGuildSchema.add('notify_channel', 'string');
 
+Client.use(require('klasa-dashboard-hooks'));
+
 client.handler = new DataHandler();
 
 client.updateActivity = function() {
