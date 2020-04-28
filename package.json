@@ -24,11 +24,11 @@
   "dependencies": {
     "@hcphoon01/leaflet-headless": "github:hcphoon01/leaflet-headless",
     "ascii-table": "0.0.9",
-    "better-sqlite3": "^6.0.1",
+    "better-sqlite3": "^7.0.1",
     "bluebird": "^3.7.2",
     "csv-parser": "^2.3.2",
     "csvtojson": "^2.0.10",
-    "discord.js": "github:discordjs/discord.js",
+    "discord.js": "github:discordjs/discord.js#master",
     "dotenv": "^8.2.0",
     "fs-nextra": "^0.4.7",
     "klasa": "github:dirigeants/klasa#master",
@@ -36,7 +36,7 @@
     "leaflet-image": "^0.4.0",
     "moment": "^2.24.0",
     "request": "^2.88.2",
-    "vatsim-data-handler": "^4.1.0"
+    "vatsim-data-handler": "^4.2.0"
   },
   "devDependencies": {
     "babel-eslint": "^10.1.0",
