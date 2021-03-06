@@ -1,21 +1,32 @@
-const { Command } = require('klasa');
+const { Command } = require('discord-akairo');
 const { MessageEmbed } = require('discord.js');
 
-module.exports = class extends Command {
+module.exports = class ATISCommand extends Command {
 
-    constructor(...args) {
+    constructor() {
         /**
          * Any default options can be omitted completely.
          * if all options are default, you can omit the constructor completely
          */
-        super(...args, {
+        super('atis', {
             cooldown: 5,
             description: 'Fetch the ATIS for a given airport',
-            usage: '<ICAO:icao>',
+            aliases: ['atis'],
+            args: [
+                {
+                    id: 'airport',
+                    type: /[A-Z]{4}/i,
+                    prompt: {
+                        start: 'Enter a valid Airport ICAO code',
+                        retry: 'That is an invalid ICAO code, try again'
+                    }
+                }
+            ]
         });
     }
 
-    async run(message, [airport]) {
+    exec(message, args) {
+        const airport = args.airport.match[0].toUpperCase();
         this.client.handler.getAirportInfo(airport).then(val => {
             let atis;
             val.controllers.forEach(controller => {
@@ -33,12 +44,4 @@ module.exports = class extends Command {
             }
         });
     }
-
-    async init() {
-        /*
-         * You can optionally define this method which will be run when the bot starts
-         * (after login, so discord data is available via this.client)
-         */
-    }
-
 };
