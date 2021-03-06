@@ -1,25 +1,50 @@
-const { KlasaClient, Client } = require("klasa");
-const DataHandler = require('vatsim-data-handler');
+const { handler } = require('vatsim-data-handler');
+const { AkairoClient, CommandHandler, ListenerHandler } = require('discord-akairo');
+require('dotenv').config();
 
-require("dotenv").config();
+// const client = new KlasaClient({
+//   prefix: "!",
+//   commandEditing: true,
+//   typing: true,
+//   providers: {default: 'json'},
+//   readyMessage: client =>
+//     `Successfully initialized. Ready to serve ${client.guilds.size} guilds.`,
+// });
 
-const client = new KlasaClient({
-  prefix: "!",
-  commandEditing: true,
-  typing: true,
-  providers: {default: 'json'},
-  readyMessage: client =>
-    `Successfully initialized. Ready to serve ${client.guilds.size} guilds.`,
-});
+// Client.defaultGuildSchema.add('notify_channel', 'string');
 
-Client.defaultGuildSchema.add('notify_channel', 'string');
+class MyClient extends AkairoClient {
+    constructor() {
+        super({
+            // Options for Akairo go here.
+        }, {
+            // Options for discord.js goes here.
+        });
 
-Client.use(require('klasa-dashboard-hooks'));
+        this.commandHandler = new CommandHandler(this, {
+            directory: './src/commands/',
+            prefix: '!'
+        });
 
-client.handler = new DataHandler();
+        this.listenerHandler = new ListenerHandler(this, {
+            directory: './src/listeners/'
+        });
 
-client.updateActivity = function() {
-  client.handler.getCount('all').then(val => client.user.setActivity(`over ${val} users | !help`, {type: 'WATCHING'}));
-};
+        this.listenerHandler.setEmitters({
+            process: process,
+        });
 
+        this.commandHandler.loadAll();
+        //this.listenerHandler.loadAll();
+    }
+}
+
+const client = new MyClient();
 client.login(process.env.DISCORD_TOKEN);
+
+client.handler = handler;
+
+client.on('ready', () => {
+    client.handler.getCount('all').then(val => client.user.setActivity(`over ${val} users | !help`, { type: 'WATCHING' }));
+    console.log(`Successfully initialized.`);
+});
