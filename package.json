@@ -35,6 +35,7 @@
     "moment": "^2.29.1",
     "request": "^2.88.2",
     "sqlite": "^4.0.19",
+    "sqlite3": "^5.0.2",
     "vatsim-data-handler": "^5.0.2"
   },
   "devDependencies": {
