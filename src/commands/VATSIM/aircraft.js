@@ -4,10 +4,6 @@ const { MessageEmbed } = require("discord.js");
 
 module.exports = class AircraftCommand extends Command {
   constructor() {
-    /**
-     * Any default options can be omitted completely.
-     * if all options are default, you can omit the constructor completely
-     */
     super("aircraft", {
       cooldown: 5,
       description: "Get information for a given callsign",
