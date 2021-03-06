@@ -26,7 +26,7 @@ module.exports = class ATISCommand extends Command {
   }
 
   exec(message, args) {
-    const airport = args.airport.match[0].toUpperCase();
+    const airport = args.airport;
     this.client.handler.getAirportInfo(airport).then((val) => {
       let atis;
       val.controllers.forEach((controller) => {

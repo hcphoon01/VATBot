@@ -1,7 +1,6 @@
 const { Command } = require("discord-akairo");
 const { Menu } = require("discord.js-menu");
 const { MessageEmbed } = require("discord.js");
-const AsciiTable = require("ascii-table");
 
 module.exports = class AirportCommand extends Command {
   constructor() {
@@ -28,7 +27,7 @@ module.exports = class AirportCommand extends Command {
   }
 
   async exec(message, args) {
-    const airport = args.airport.match[0].toUpperCase();
+    const airport = args.airport;
     this.client.handler.getAirportInfo(airport).then((val) => {
       if (val.pilots.length == 0 && val.controllers.length == 0)
         return message.channel.send(
