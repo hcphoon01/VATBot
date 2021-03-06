@@ -10,7 +10,7 @@ module.exports = class HelpCommand extends Command {
                 content: 'Displays a list of available command, or detailed information for a specific command.',
                 usage: '[command]'
             },
-            category: 'util',
+            category: 'General',
             clientPermissions: ['EMBED_LINKS'],
             ratelimit: 2,
             args: [
