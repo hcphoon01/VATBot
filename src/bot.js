@@ -26,6 +26,13 @@ class MyClient extends AkairoClient {
             prefix: '!'
         });
 
+        this.commandHandler.resolver.addType('icao', (message, phrase) => {
+            if (!phrase) return null;
+            const result = /[A-Z]{4}/i.exec(phrase);
+            if (result) return phrase.toUpperCase();
+            return null;
+        });
+
         this.listenerHandler = new ListenerHandler(this, {
             directory: './src/listeners/'
         });

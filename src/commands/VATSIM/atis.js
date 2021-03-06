@@ -15,7 +15,7 @@ module.exports = class ATISCommand extends Command {
       args: [
         {
           id: "airport",
-          type: /[A-Z]{4}/i,
+          type: 'icao',
           prompt: {
             start: "Enter a valid Airport ICAO code",
             retry: "That is an invalid ICAO code, try again",
