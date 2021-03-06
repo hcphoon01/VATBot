@@ -9,7 +9,12 @@ module.exports = class ATISCommand extends Command {
      */
     super("atis", {
       cooldown: 5,
-      description: "Fetch the ATIS for a given airport",
+      description: {
+        content: "Fetch the ATIS for a given airport",
+        usage: '<airport>',
+        examples: ['EGLL', 'KJFK']
+      },
+      category: 'VATSIM',
       aliases: ["atis"],
       args: [
         {

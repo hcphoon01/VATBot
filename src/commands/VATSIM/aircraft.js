@@ -6,7 +6,12 @@ module.exports = class AircraftCommand extends Command {
   constructor() {
     super("aircraft", {
       cooldown: 5,
-      description: "Get information for a given callsign",
+      description: {
+        content: "Get information for a given callsign",
+        usage: '<callsign>',
+        examples: ['BAW1', 'G-ETMCA']
+      },
+      category: 'VATSIM',
       aliases: ["aircraft"],
       args: [
         {

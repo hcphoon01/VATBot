@@ -7,7 +7,12 @@ module.exports = class AirportCommand extends Command {
   constructor() {
     super("airport", {
       cooldown: 5,
-      description: "Get the activity for a given Airport ICAO code.",
+      description: {
+        content: "Get the activity for a given Airport ICAO code.",
+        usage: '<airport>',
+        examples: ['EGLL', 'KJFK']
+      },
+      category: 'VATSIM',
       aliases: ["airport"],
       args: [
         {
