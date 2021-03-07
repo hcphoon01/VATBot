@@ -39,7 +39,7 @@ module.exports = class NewControllerListener extends Listener {
       try {
         this.client.channels.cache.get(guild.notifyChannel).send(embed);
       } catch (e) {
-        console.log(e);
+        //
       }
     });
   }
