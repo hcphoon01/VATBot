@@ -1,0 +1,10 @@
+{
+  "dev": {
+    "driver": "sqlite3",
+    "filename": "./src/bwd/sqlite/db.sqlite"
+  },
+  "prod": {
+    "driver": "sqlite3",
+    "filename": "./src/bwd/sqlite/db.sqlite"
+  }
+}

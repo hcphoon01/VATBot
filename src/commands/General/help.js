@@ -23,8 +23,7 @@ module.exports = class HelpCommand extends Command {
     }
 
     async exec(message, { command }) {
-        const prefix = '!';
-        // TODO dynamic prefix
+        const prefix = this.client.settings.get(message.guild.id, "prefix", "!");
         if (!command) {
             const embed = new MessageEmbed()
                 .setColor('#47970E')

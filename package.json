@@ -27,6 +27,8 @@
     "common-tags": "^1.8.0",
     "csv-parser": "^3.0.0",
     "csvtojson": "^2.0.10",
+    "db-migrate": "^0.11.12",
+    "db-migrate-sqlite3": "^0.4.0",
     "discord-akairo": "github:discord-akairo/discord-akairo",
     "discord.js": "^12.5.1",
     "discord.js-menu": "^2.3.1",
