@@ -17,6 +17,7 @@ class PrefixCommand extends Command {
         },
       ],
       channel: "guild",
+      userPermissions: ["MANAGE_SERVER"],
     });
   }
 
@@ -25,7 +26,9 @@ class PrefixCommand extends Command {
     const oldPrefix = this.client.settings.get(message.guild.id, "prefix", "!");
 
     await this.client.settings.set(message.guild.id, "prefix", args.prefix);
-    return message.reply(`Prefix changed from \`${oldPrefix}\` to \`${args.prefix}\``);
+    return message.reply(
+      `Prefix changed from \`${oldPrefix}\` to \`${args.prefix}\``
+    );
   }
 }
 
