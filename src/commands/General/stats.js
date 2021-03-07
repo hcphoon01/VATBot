@@ -17,7 +17,6 @@ module.exports = class StatCommand extends Command {
   exec(message) {
     const now = moment(new Date);
     const start = Date.now() - (process.uptime() * 1000);
-    console.log(this.client.users.cache.get(this.client.ownerID).avatarURL);
     return message.channel.send(
       new MessageEmbed()
         .setTitle(`${this.client.user.username} Stats`)
