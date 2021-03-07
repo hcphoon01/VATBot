@@ -25,7 +25,7 @@ class MyClient extends AkairoClient {
   constructor() {
     super(
       {
-        // Options for Akairo go here.
+        ownerID: '136184427318476800'
       },
       {
         // Options for discord.js goes here.
@@ -69,9 +69,18 @@ class MyClient extends AkairoClient {
         dataColumn: "settings",
       }
     );
+
+    this.airports = new SQLiteProvider(
+      sqlite.open({filename: path.join(__dirname + "/bwd/sqlite/db.sqlite"), driver: sqlite3.Database}),
+      "airports",
+      {
+        idColumn: 'icao'
+      }
+    );
   }
   async _init() {
     await this.settings.init();
+    await this.airports.init();
   }
 }
 

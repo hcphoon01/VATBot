@@ -36,6 +36,7 @@
     "fs-nextra": "^0.5.1",
     "moment": "^2.29.1",
     "request": "^2.88.2",
+    "sequelize": "^6.5.0",
     "sqlite": "^4.0.19",
     "sqlite3": "^5.0.2",
     "vatsim-data-handler": "^5.0.2"
@@ -43,6 +44,7 @@
   "devDependencies": {
     "babel-eslint": "^10.1.0",
     "eslint": "^7.21.0",
-    "node-dev": "^6.4.0"
+    "node-dev": "^6.4.0",
+    "sequelize-cli": "^6.2.0"
   }
 }
