@@ -1,29 +1,20 @@
-const { Command } = require('klasa');
-const { MessageEmbed} = require('discord.js');
+const { Command } = require("discord-akairo");
 
-const id = '136184427318476800';
-
-module.exports = class extends Command {
-
-    constructor(...args) {
-        /**
-         * Any default options can be omitted completely.
-         * if all options are default, you can omit the constructor completely
-         */
-        super(...args, {
-            description: 'Display information for reporting bugs',
-        });
-    }
-
-    async run(message, [...params]) {
-        return message.channel.send(message.language.get('BUG_INFO'));
-    }
-
-    async init() {
-        /*
-         * You can optionally define this method which will be run when the bot starts
-         * (after login, so discord data is available via this.client)
-         */
-    }
-
+module.exports = class BugCommand extends Command {
+  constructor() {
+    super("bug", {
+      cooldown: 5,
+      description: {
+        content:
+          "Display information for reporting bugs",
+      },
+      category: "General",
+      aliases: ["bug"],
+    });
+  }
+  exec(message) {
+    return message.channel.send(
+      "To report a bug you first need to join the VATBot Discord Server: https://discord.gg/Htzybqa\nThen head to the #tickets channel, click the reaction on the message, go to the created channel which should be #ticket-xxxx where `xxxx` is the number of your ticket, and report your bug."
+    );
+  }
 };

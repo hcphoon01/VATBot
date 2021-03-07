@@ -1,24 +1,39 @@
-const { Command } = require("klasa");
-const { MessageEmbed } = require('discord.js');
-
+const { Command } = require("discord-akairo");
+const { MessageEmbed } = require("discord.js");
 const request = require("request");
+
 require("dotenv").config();
 
-module.exports = class extends Command {
+module.exports = class MetarCommand extends Command {
   constructor(...args) {
-    super(...args, {
-      name: "METAR",
-      cooldown: 2,
-      description: "Get the METAR for a given airport ICAO/given airport ICAOs",
-      extendedHelp:
-        "<> means an ICAO code is a required argument and [...] means multiple codes can be passed with the command",
-      usage: "<ICAO:icao>[...]",
-      usageDelim: " "
+    super("metar", {
+      name: "metar",
+      cooldown: 5,
+      description: {
+        content: "Get the METAR for a given airport ICAO/given airport ICAOs",
+        usage: "<icao>",
+        examples: ["EGLL", "KJFK"],
+      },
+      aliases: ["metar"],
+      category: "Weather",
+      args: [
+        {
+          id: "airport",
+          type: "icao",
+          match: "content",
+          prompt: {
+            start: "Enter a valid Airport ICAO code",
+            retry: "That is an invalid ICAO code, try again",
+          },
+        },
+      ],
     });
   }
 
-  async run(message, [...airport]) {
-    if (airport.length == 0) return message.reply("you must specify an ICAO code");
+  async exec(message, args) {
+    const airport = args.airport.split(" ");
+    if (airport.length == 0)
+      return message.reply("you must specify an ICAO code");
     if (airport.length == 1) {
       request(
         `https://api.checkwx.com/metar/${airport}`,
@@ -29,11 +44,11 @@ module.exports = class extends Command {
           }
           if (body.results !== 0) {
             const embed = new MessageEmbed()
-            .setTitle(`RAW METAR for ${airport}`)
-            .setColor('#47970E')
-            .setDescription('```' + body.data[0] + "```");
-          
-          return message.channel.send(embed);
+              .setTitle(`RAW METAR for ${airport}`)
+              .setColor("#47970E")
+              .setDescription("```" + body.data[0] + "```");
+
+            return message.channel.send(embed);
           } else {
             return message.reply(
               `a METAR is not available for your requested airport ${airport}, please ensure you have entered a valid airport ICAO code`
@@ -53,9 +68,9 @@ module.exports = class extends Command {
           if (body.results !== 0) {
             const embed = new MessageEmbed()
               .setTitle(`METAR Results`)
-              .setColor('#47970E');
+              .setColor("#47970E");
             body.data.forEach((result, i) => {
-              embed.addField(airport[i], '```' + result + '```');
+              embed.addField(airport[i], "```" + result + "```");
             });
             return message.channel.send(embed);
           } else {

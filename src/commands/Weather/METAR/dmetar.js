@@ -1,23 +1,34 @@
-const { Command } = require("klasa");
+const { Command } = require("discord-akairo");
 const request = require("request");
+require("dotenv").config();
 
-module.exports = class extends Command {
+module.exports = class DmetarCommand extends Command {
   constructor(...args) {
-    /**
-     * Any default options can be omitted completely.
-     * if all options are default, you can omit the constructor completely
-     */
-    super(...args, {
+    super('dmetar', {
       name: "dmetar",
+      cooldown: 5,
+      description: {
+        content: "Get a decoded METAR for a given ICAO Code",
+        usage: '<icao>',
+        examples: ['EGLL', 'KJFK']
+      },
       aliases: ["dmetar"],
-      cooldown: 2,
-      description: "Get a decoded METAR for a given ICAO Code",
-      usage: "<ICAO:icao>",
-      extendedHelp: "<> means an ICAO code is a required argument."
+      category: 'Weather',
+      args: [
+        {
+          id: "airport",
+          type: 'icao',
+          prompt: {
+            start: "Enter a valid Airport ICAO code",
+            retry: "That is an invalid ICAO code, try again",
+          },
+        },
+      ],
     });
   }
 
-  async run(message, [airport]) {
+  async exec(message, args) {
+    const airport = args.airport;
     if (airport.length == 0) return message.reply("you must specify an ICAO code");
     request(
       `https://api.checkwx.com/metar/${airport}/decoded`,

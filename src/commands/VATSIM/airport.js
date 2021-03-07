@@ -1,24 +1,40 @@
-const { Command } = require("klasa");
-const AsciiTable = require('ascii-table');
+const { Command } = require("discord-akairo");
+const { Menu } = require("discord.js-menu");
+const { MessageEmbed } = require("discord.js");
 
-module.exports = class extends Command {
-  constructor(...args) {
-    /**
-     * Any default options can be omitted completely.
-     * if all options are default, you can omit the constructor completely
-     */
-    super(...args, {
+module.exports = class AirportCommand extends Command {
+  constructor() {
+    super("airport", {
       cooldown: 5,
-      name: "Airport",
-      description: "Get the activity for a given Airport ICAO code.",
-      usage: "<ICAO:icao>",
-      extendedHelp: "<> means an ICAO code is a required argument."
+      description: {
+        content: "Get the activity for a given Airport ICAO code.",
+        usage: '<airport>',
+        examples: ['EGLL', 'KJFK']
+      },
+      category: 'VATSIM',
+      aliases: ["airport"],
+      args: [
+        {
+          id: "airport",
+          type: 'icao',
+          prompt: {
+            start: "Enter a valid Airport ICAO code",
+            retry: "That is an invalid ICAO code, try again",
+          },
+        },
+      ],
     });
   }
 
-  async run(message, [airport]) {
-    this.client.handler.getAirportInfo(airport).then(val => {
-      if (val.pilots.length == 0 && val.controllers.length == 0) return message.send(`There is no activity at your requested airport: ${airport.toUpperCase()}`);
+  async exec(message, args) {
+    const airport = args.airport;
+    this.client.handler.getAirportInfo(airport).then((val) => {
+      if (val.pilots.length == 0 && val.controllers.length == 0)
+        return message.channel.send(
+          "There is no activity at your requested airport: `" +
+            airport.toUpperCase() +
+            "`"
+        );
       var depArray = [];
       var arrArray = [];
       for (let i = 0; i < val.pilots.length; i++) {
@@ -29,56 +45,153 @@ module.exports = class extends Command {
           arrArray.push(pilot);
         }
       }
-      var depsTable = this.createPilotTable('Departures', depArray);
-      var arrTable = this.createPilotTable('Arrivals', arrArray);
-      var controllerTable = this.createControllerTable(val.controllers);
-      var contentArray = [];
-      if (depsTable.__rows.length > 0) {
-        contentArray.push(depsTable.toString());
+
+      const reactions = {
+        "🛫": "departures",
+        "🛬": "arrivals",
+        "📡": "controllers",
+        "⏪": "first",
+        "⬅️": "previous",
+        "➡️": "next",
+        "⏩": "last",
+        "⏹️": "stop"
+      };
+
+      const pages = [
+        {
+          name: "main",
+          content: new MessageEmbed()
+            .setTitle(`Airport Details for ${airport}`)
+            .setColor("#47970E")
+            .addField("Departures 🛫", depArray.length)
+            .addField("Arrivals 🛬", arrArray.length)
+            .addField("Controllers 📡", val.controllers.length),
+          reactions: reactions,
+        },
+      ];
+
+      // Departure pages
+
+      const depChunks = this.chunk(depArray, 10);
+
+      for (let i = 0; i < depChunks.length; i++) {
+        const element = depChunks[i];
+        if (i == 0) {
+          pages.push({
+            name: "departures",
+            content: this.createAircraftEmbed("Departure", element, airport),
+            reactions: reactions,
+          });
+        } else {
+          pages.push({
+            name: `departures${i}`,
+            content: this.createAircraftEmbed("Departure", element, airport),
+            reactions: reactions,
+          });
+        }
       }
-      if (arrTable.__rows.length > 0) {
-        contentArray.push(arrTable.toString());
+
+      // Arrival pages
+
+      const arrChunks = this.chunk(arrArray, 10);
+
+      for (let i = 0; i < arrChunks.length; i++) {
+        const element = arrChunks[i];
+        if (i == 0) {
+          pages.push({
+            name: "arrivals",
+            content: this.createAircraftEmbed("Arrival", element, airport),
+            reactions: reactions,
+          });
+        } else {
+          pages.push({
+            name: `arrivals${i}`,
+            content: this.createAircraftEmbed("Arrival", element, airport),
+            reactions: reactions,
+          });
+        }
       }
-      if (controllerTable.__rows.length > 0) {
-        contentArray.push(controllerTable.toString());
+
+      // Controller pages
+
+      const controlChunks = this.chunk(val.controllers, 10);
+
+      for (let i = 0; i < controlChunks.length; i++) {
+        const element = controlChunks[i];
+        if (i == 0) {
+          pages.push({
+            name: "controllers",
+            content: this.createControllerEmbed(element, airport),
+            reactions: reactions,
+          });
+        } else {
+          pages.push({
+            name: `controllers${i}`,
+            content: this.createControllerEmbed(element, airport),
+            reactions: reactions,
+          });
+        }
       }
-      var content = contentArray.join('```\n```');
-      return message.channel.send('```' + content + '```', {split: {char: '```\n```',prepend: '```', append: '```'}});
+
+      const menu = new Menu(message.channel, message.author.id, pages);
+
+      return menu.start();
     });
   }
 
-  createPilotTable(type, array) {
-    const table = new AsciiTable;
-    table.setTitle(`Active ${type}`);
-    table.setHeading('Callsign', 'Aircraft', 'Departure', 'Arrival');
-    array.forEach(pilot => {
-      table.addRow(pilot.callsign, pilot.planned_aircraft, pilot.planned_depairport, pilot.planned_destairport);
-    });
-    return table;
+  createAircraftEmbed(type, array, airport) {
+    const embed = new MessageEmbed()
+      .setTitle(`${type} details for ${airport}`)
+      .setColor("#47970E")
+      .setDescription("Aircraft, Departure, Arrival");
+    for (let i = 0; i < array.length; i++) {
+      const element = array[i];
+      embed.addField(
+        element.callsign,
+        `\`${element.planned_aircraft}\`, \`${element.planned_depairport}\`, \`${element.planned_destairport}\``
+      );
+    }
+    return embed;
   }
 
-  createControllerTable(array) {
-    const table = new AsciiTable;
-    table.setTitle('Active Controllers');
-    table.setHeading('Callsign', 'Frequency', 'Position');
-    array.forEach(controller => {
-      table.addRow(controller.callsign, controller.frequency, this.parsePosition(controller.facilitytype, controller.callsign));
-    });
-    return table;
+  createControllerEmbed(array, airport) {
+    const embed = new MessageEmbed()
+      .setTitle(`Controller details for ${airport}`)
+      .setColor("#47970E");
+    for (let i = 0; i < array.length; i++) {
+      const element = array[i];
+      embed.addField(
+        element.callsign,
+        `Frequency: \`${element.frequency}\`, Position: \`${this.parsePosition(
+          element.facilitytype,
+          element.callsign
+        )}\``
+      );
+    }
+    return embed;
+  }
+
+  // Split up array
+  chunk(arr, chunkSize) {
+    if (chunkSize <= 0) throw "Invalid chunk size";
+    var R = [];
+    for (var i = 0, len = arr.length; i < len; i += chunkSize)
+      R.push(arr.slice(i, i + chunkSize));
+    return R;
   }
 
   parsePosition(position, callsign) {
     const pos = position.toString();
     switch (pos) {
-      case '2':
-        return 'Delivery';
-      case '3':
-        return 'Ground';
-      case '5':
-        return 'Approach';
-      case '6':
-        return 'Center';
-      case '4':
+      case "2":
+        return "Delivery";
+      case "3":
+        return "Ground";
+      case "5":
+        return "Approach";
+      case "6":
+        return "Center";
+      case "4":
         return this.parseTower(callsign);
       default:
         return this.parseTower(callsign);
@@ -86,17 +199,10 @@ module.exports = class extends Command {
   }
 
   parseTower(callsign) {
-    if (callsign.includes('ATIS')) {
-      return 'ATIS';
-    } else if (callsign.includes('TWR')) {
-      return 'Tower';
+    if (callsign.includes("ATIS")) {
+      return "ATIS";
+    } else if (callsign.includes("TWR")) {
+      return "Tower";
     }
-  }
-
-  async init() {
-    /*
-     * You can optionally define this method which will be run when the bot starts
-     * (after login, so discord data is available via this.client)
-     */
   }
 };

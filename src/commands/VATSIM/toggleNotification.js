@@ -1,50 +1,55 @@
-const { Command } = require('klasa');
+const { Command } = require("discord-akairo");
 
-module.exports = class extends Command {
+module.exports = class ToggleNotificationCommand extends Command {
+  constructor() {
+    super("togglenotification", {
+      aliases: [
+        "togglenotification",
+        "toggle-notification",
+        "notification",
+        "notify",
+      ],
+      description: {
+        content:
+          "Toggle the notifications for when controllers connect to VATSIM.",
+        usage: "<enable|disable> [channel]",
+        examples: ["enable #general", "disable"],
+      },
+      category: "VATSIM",
+      channel: "guild",
+      userPermissions: ["MANAGE_SERVER"],
+    });
+  }
 
-    constructor(...args) {
-        /**
-         * Any default options can be omitted completely.
-         * if all options are default, you can omit the constructor completely
-         */
-        super(...args, {
-            enabled: true,
-            name: "Notification",
-            cooldown: 10,
-            permissionLevel: 6,
-            subcommands: true,
-            description: 'Toggle the notifications for when controllers connect to VATSIM.',
-            usage: '<enable|disable> [Channel:channel]',
-            usageDelim: ' '
-        });
+  *args() {
+    const type = yield { type: ["enable", "disable"] };
+
+    if (type == "enable") {
+      const channel = yield {
+        type: "channel",
+        prompt: {
+          start: 'Please mention a valid channel',
+          retry: 'You have not mentioned a valid channel'
+        },
+      };
+
+      return { type, channel };
+    } else {
+      return { type };
     }
+  }
 
-    async enable(message, [channel]) {
-        if (message.mentions.channels.first()) {
-            await message.guild.settings.update('notify_channel', channel.id);
-            message.reply(`you have successfully enabled the notifications in ${message.guild.channels.cache.get(channel.id).toString()}`);
-        }
-        else {
-            message.channel.send('You must mention a channel to enable the notifications in.');
-        }
-        
+  async exec(message, args) {
+    if (args.type == "enable") {
+      await this.client.settings.set(
+        message.guild.id,
+        "notifyChannel",
+        args.channel.id
+      );
+      return message.reply(`Notifications enabled in ${args.channel}`);
+    } else {
+      await this.client.settings.delete(message.guild.id, "notifyChannel");
+      return message.reply("Notifications disabled");
     }
-
-    async disable(message) {
-        await message.guild.settings.reset('notify_channel');
-        message.reply('you have successfully disabled notifications');
-    }
-
-    async run(message, [...params]) {
-        // This is where you place the code you want to run for your command
-        ;
-    }
-
-    async init() {
-        /*
-         * You can optionally define this method which will be run when the bot starts
-         * (after login, so discord data is available via this.client)
-         */
-    }
-
+  }
 };

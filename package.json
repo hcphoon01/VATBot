@@ -22,25 +22,29 @@
   },
   "homepage": "https://github.com/hcphoon01/VATBot#readme",
   "dependencies": {
-    "@hcphoon01/leaflet-headless": "github:hcphoon01/leaflet-headless",
     "ascii-table": "0.0.9",
-    "better-sqlite3": "^7.1.1",
     "bluebird": "^3.7.2",
+    "common-tags": "^1.8.0",
     "csv-parser": "^3.0.0",
     "csvtojson": "^2.0.10",
-    "discord.js": "github:discordjs/discord.js#master",
+    "db-migrate": "^0.11.12",
+    "db-migrate-sqlite3": "^0.4.0",
+    "discord-akairo": "github:discord-akairo/discord-akairo",
+    "discord.js": "^12.5.1",
+    "discord.js-menu": "^2.3.1",
     "dotenv": "^8.2.0",
     "fs-nextra": "^0.5.1",
-    "klasa": "github:dirigeants/klasa#master",
-    "klasa-dashboard-hooks": "github:dirigeants/klasa-dashboard-hooks",
-    "leaflet-image": "^0.4.0",
     "moment": "^2.29.1",
     "request": "^2.88.2",
-    "vatsim-data-handler": "^4.2.0"
+    "sequelize": "^6.5.0",
+    "sqlite": "^4.0.19",
+    "sqlite3": "^5.0.2",
+    "vatsim-data-handler": "^5.0.2"
   },
   "devDependencies": {
     "babel-eslint": "^10.1.0",
-    "eslint": "^7.15.0",
-    "node-dev": "^6.2.0"
+    "eslint": "^7.21.0",
+    "node-dev": "^6.4.0",
+    "sequelize-cli": "^6.2.0"
   }
 }
