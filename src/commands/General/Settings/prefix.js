@@ -22,7 +22,7 @@ class PrefixCommand extends Command {
   }
 
   async exec(message, args) {
-    // The third param is the default.
+
     const oldPrefix = this.client.settings.get(message.guild.id, "prefix", "!");
 
     await this.client.settings.set(message.guild.id, "prefix", args.prefix);
