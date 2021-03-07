@@ -23,9 +23,9 @@ module.exports = class NewControllerListener extends Listener {
       if (controller.facilitytype == 0) return;
       embed.addField(
         `Callsign: ${controller.callsign}`,
-        `Frequency: ${controller.frequency}, Position: ${this.parsePosition(
+        `Frequency: \`${controller.frequency}\`, Position: \`${this.parsePosition(
           controller.facilitytype
-        )}`
+        )}\``
       );
     });
     if (embed.fields.length > 0) {
