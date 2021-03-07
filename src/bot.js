@@ -59,7 +59,7 @@ class MyClient extends AkairoClient {
     });
 
     this.commandHandler.loadAll();
-    //this.listenerHandler.loadAll();
+    this.listenerHandler.loadAll();
 
     this.settings = new SQLiteProvider(
       sqlite.open({ filename: path.join(__dirname + "/bwd/sqlite/db.sqlite"), driver: sqlite3.Database }),

@@ -64,3 +64,4 @@ typings/
 src/bwd/*
 src/commands/testing
 *Data.json
+src/oldcommands/*
