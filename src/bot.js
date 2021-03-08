@@ -6,7 +6,7 @@ const {
   SQLiteProvider,
 } = require("discord-akairo");
 const sqlite = require("sqlite");
-const sqlite3 = require('sqlite3');
+const sqlite3 = require("sqlite3");
 const path = require("path");
 require("dotenv").config();
 
@@ -25,7 +25,7 @@ class MyClient extends AkairoClient {
   constructor() {
     super(
       {
-        ownerID: '136184427318476800'
+        ownerID: "136184427318476800",
       },
       {
         // Options for discord.js goes here.
@@ -55,6 +55,7 @@ class MyClient extends AkairoClient {
     });
 
     this.listenerHandler.setEmitters({
+      commandHandler: this.commandHandler,
       process: process,
     });
 
@@ -62,7 +63,10 @@ class MyClient extends AkairoClient {
     this.listenerHandler.loadAll();
 
     this.settings = new SQLiteProvider(
-      sqlite.open({ filename: path.join(__dirname + "/bwd/sqlite/db.sqlite"), driver: sqlite3.Database }),
+      sqlite.open({
+        filename: path.join(__dirname + "/bwd/sqlite/db.sqlite"),
+        driver: sqlite3.Database,
+      }),
       "guild_settings",
       {
         idColumn: "guild_id",
@@ -71,10 +75,13 @@ class MyClient extends AkairoClient {
     );
 
     this.airports = new SQLiteProvider(
-      sqlite.open({filename: path.join(__dirname + "/bwd/sqlite/db.sqlite"), driver: sqlite3.Database}),
+      sqlite.open({
+        filename: path.join(__dirname + "/bwd/sqlite/db.sqlite"),
+        driver: sqlite3.Database,
+      }),
       "airports",
       {
-        idColumn: 'icao'
+        idColumn: "icao",
       }
     );
   }
