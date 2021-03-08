@@ -8,7 +8,7 @@ module.exports = class InvalidChannelListener extends Listener {
     });
   }
 
-  exec(message, reason) {
+  exec(message, command, reason) {
     if (reason == "guild") {
       return message.reply("You can only use that command in a server");
     }
