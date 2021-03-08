@@ -19,6 +19,7 @@ module.exports = class FlightGeneratorCommand extends Command {
           default: null,
         },
       ],
+      channel: 'guild',
     });
   }
 
@@ -58,8 +59,15 @@ module.exports = class FlightGeneratorCommand extends Command {
         const embed = new MessageEmbed()
           .setTitle("Random Flight")
           .setColor("#47970E")
-          .addField("Departure", `\`${closest[0].details.icao}\`, \`${closest[0].count}\` users`)
-          .addField("Arrival", `\`${closest[1].details.icao}\`, \`${closest[1].count}\` users`, true)
+          .addField(
+            "Departure",
+            `\`${closest[0].details.icao}\`, \`${closest[0].count}\` users`
+          )
+          .addField(
+            "Arrival",
+            `\`${closest[1].details.icao}\`, \`${closest[1].count}\` users`,
+            true
+          )
           .addField("Distance (nmi)", `\`${Math.round(closest.distance)}\``);
 
         return message.channel.send(embed);
@@ -77,8 +85,15 @@ module.exports = class FlightGeneratorCommand extends Command {
         const embed = new MessageEmbed()
           .setTitle("Random Flight")
           .setColor("#47970E")
-          .addField("Departure", `\`${departure.icao}\`, \`${airports[0].count}\` users`)
-          .addField("Arrival", `\`${arrival.icao}\`, \`${airports[1].count}\` users`, true)
+          .addField(
+            "Departure",
+            `\`${departure.icao}\`, \`${airports[0].count}\` users`
+          )
+          .addField(
+            "Arrival",
+            `\`${arrival.icao}\`, \`${airports[1].count}\` users`,
+            true
+          )
           .addField("Distance (nmi)", `\`${Math.round(distance)}\``);
 
         return message.channel.send(embed);

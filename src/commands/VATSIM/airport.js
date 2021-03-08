@@ -23,6 +23,7 @@ module.exports = class AirportCommand extends Command {
           },
         },
       ],
+      channel: 'guild',
     });
   }
 

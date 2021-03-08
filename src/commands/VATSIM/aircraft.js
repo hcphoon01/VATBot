@@ -23,6 +23,7 @@ module.exports = class AircraftCommand extends Command {
           }
         },
       ],
+      channel: 'guild',
     });
   }
 
