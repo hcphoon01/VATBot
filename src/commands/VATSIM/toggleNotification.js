@@ -40,7 +40,7 @@ module.exports = class ToggleNotificationCommand extends Command {
       };
 
       return { type, channel };
-    } else if (type == "disabled") {
+    } else {
       return { type };
     }
   }
@@ -53,7 +53,7 @@ module.exports = class ToggleNotificationCommand extends Command {
         args.channel.id
       );
       return message.reply(`Notifications enabled in ${args.channel}`);
-    } else if (args.type == "disabled") {
+    } else if (args.type == "disable") {
       await this.client.settings.delete(message.guild.id, "notifyChannel");
       return message.reply("Notifications disabled");
     }
