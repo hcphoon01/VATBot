@@ -22,19 +22,25 @@ module.exports = class ToggleNotificationCommand extends Command {
   }
 
   *args() {
-    const type = yield { type: ["enable", "disable"] };
+    const type = yield {
+      type: ["enable", "disable"],
+      prompt: {
+        start: "Enter either `enable` or `disable`",
+        retry: "You must enter either `enable` or `disable`",
+      },
+    };
 
     if (type == "enable") {
       const channel = yield {
         type: "channel",
         prompt: {
-          start: 'Please mention a valid channel',
-          retry: 'You have not mentioned a valid channel'
+          start: "Please mention a valid channel",
+          retry: "You have not mentioned a valid channel",
         },
       };
 
       return { type, channel };
-    } else {
+    } else if (type == "disabled") {
       return { type };
     }
   }
@@ -47,7 +53,7 @@ module.exports = class ToggleNotificationCommand extends Command {
         args.channel.id
       );
       return message.reply(`Notifications enabled in ${args.channel}`);
-    } else {
+    } else if (args.type == "disabled") {
       await this.client.settings.delete(message.guild.id, "notifyChannel");
       return message.reply("Notifications disabled");
     }

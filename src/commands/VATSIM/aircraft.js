@@ -17,6 +17,10 @@ module.exports = class AircraftCommand extends Command {
         {
           id: "callsign",
           type: "string",
+          prompt: {
+            start: 'Please enter an aircraft callsign',
+            retry: 'You must enter a valid aircraft callsign'
+          }
         },
       ],
     });
