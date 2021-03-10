@@ -1,4 +1,3 @@
-require('log-timestamp');
 const { handler } = require("vatsim-data-handler");
 const {
   AkairoClient,
