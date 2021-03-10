@@ -10,17 +10,6 @@ const sqlite3 = require("sqlite3");
 const path = require("path");
 require("dotenv").config();
 
-// const client = new KlasaClient({
-//   prefix: "!",
-//   commandEditing: true,
-//   typing: true,
-//   providers: {default: 'json'},
-//   readyMessage: client =>
-//     `Successfully initialized. Ready to serve ${client.guilds.size} guilds.`,
-// });
-
-// Client.defaultGuildSchema.add('notify_channel', 'string');
-
 class MyClient extends AkairoClient {
   constructor() {
     super(
@@ -97,11 +86,14 @@ client.login(process.env.DISCORD_TOKEN);
 
 client.handler = handler;
 
-client.on("ready", () => {
+client.updateActivity = function () {
   client.handler
     .getCount("all")
     .then((val) =>
       client.user.setActivity(`over ${val} users | !help`, { type: "WATCHING" })
     );
+};
+
+client.on("ready", () => {
   console.log(`Successfully initialized.`);
 });
