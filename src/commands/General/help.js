@@ -44,7 +44,7 @@ module.exports = class HelpCommand extends Command {
         embed.addField(
           `❯ ${category.id.replace(/(\b\w)/gi, (lc) => lc.toUpperCase())}`,
           `${category
-            .filter((cmd) => cmd.aliases.length > 0)
+            .filter((cmd) => cmd.aliases.length > 0 && !cmd.description.hideHelp)
             .map((cmd) => `\`${cmd.aliases[0]}\``)
             .join(" ")}`
         );

@@ -1,7 +1,7 @@
 const { Command } = require("discord-akairo");
 
 const link =
-  "https://discordapp.com/oauth2/authorize?client_id=630862807897997341&scope=bot&permissions=335916112";
+  "https://discordapp.com/oauth2/authorize?client_id=630862807897997341&scope=bot&permissions=76864";
 
 module.exports = class InviteCommand extends Command {
   constructor() {
