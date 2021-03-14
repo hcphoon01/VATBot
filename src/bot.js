@@ -73,10 +73,35 @@ class MyClient extends AkairoClient {
         idColumn: "icao",
       }
     );
+
+    this.positions = new SQLiteProvider(
+      sqlite.open({
+        filename: path.join(__dirname + "/bwd/sqlite/db.sqlite"),
+        driver: sqlite3.Database,
+      }),
+      "positions",
+      {
+        idColumn: "position",
+      }
+    );
+
+    this.firs = new SQLiteProvider(
+      sqlite.open({
+        filename: path.join(__dirname + "/bwd/sqlite/db.sqlite"),
+        driver: sqlite3.Database,
+      }),
+      "firs",
+      {
+        idColumn: "name",
+        dataColumn: 'coordinates'
+      }
+    );
   }
   async _init() {
     await this.settings.init();
     await this.airports.init();
+    await this.positions.init();
+    await this.firs.init();
   }
 }
 
