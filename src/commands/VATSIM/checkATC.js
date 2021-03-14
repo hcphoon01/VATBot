@@ -109,6 +109,7 @@ module.exports = class AirportCommand extends Command {
             console.log(polyCoords);
             console.log(error);
           }
+          // TODO does not seem to work correctly when line finishes in polygon
           const intersects = turf.lineIntersect(gcLine, polygon);
           if (intersects.features.length > 0) {
             enrouteList.push(result);
