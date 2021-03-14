@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/hcphoon01/VATBot#readme",
   "dependencies": {
+    "@turf/turf": "^6.3.0",
     "ascii-table": "0.0.9",
     "bluebird": "^3.7.2",
     "common-tags": "^1.8.0",
@@ -37,11 +38,11 @@
     "request": "^2.88.2",
     "sqlite": "^4.0.19",
     "sqlite3": "^5.0.2",
-    "vatsim-data-handler": "^5.0.2"
+    "vatsim-data-handler": "^6.1.0"
   },
   "devDependencies": {
     "babel-eslint": "^10.1.0",
-    "eslint": "^7.21.0",
+    "eslint": "^7.22.0",
     "node-dev": "^6.4.0"
   }
 }
