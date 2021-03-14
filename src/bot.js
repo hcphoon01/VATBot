@@ -87,11 +87,11 @@ client.login(process.env.DISCORD_TOKEN);
 client.handler = handler;
 
 client.updateActivity = function () {
-  client.handler
-    .getCount("all")
-    .then((val) =>
-      client.user.setActivity(`over ${val} users | !help`, { type: "WATCHING" })
-    );
+  client.handler.getCount("all").then((val) => {
+    client.user.setActivity(`over ${val} users | !help`, {
+      type: "WATCHING",
+    });
+  });
 };
 
 client.on("ready", () => {
