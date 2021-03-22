@@ -23,7 +23,9 @@
   "homepage": "https://github.com/hcphoon01/VATBot#readme",
   "dependencies": {
     "@turf/boolean-intersects": "^6.3.0",
-    "@turf/turf": "^6.3.0",
+    "@turf/boolean-point-in-polygon": "^6.3.0",
+    "@turf/great-circle": "^6.3.0",
+    "@turf/helpers": "^6.3.0",
     "ascii-table": "0.0.9",
     "bluebird": "^3.7.2",
     "common-tags": "^1.8.0",

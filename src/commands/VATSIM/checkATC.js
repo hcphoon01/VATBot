@@ -2,7 +2,11 @@ const { Command } = require("discord-akairo");
 const { Menu } = require("discord.js-menu");
 const { MessageEmbed } = require("discord.js");
 const AsciiTable = require("ascii-table");
-const turf = require("@turf/turf");
+//const turf = require("@turf/turf");
+const booleanIntersects = require('@turf/boolean-intersects');
+const helpers = require('@turf/helpers');
+const pointInPoly = require('@turf/boolean-point-in-polygon');
+const greatCircle = require('@turf/great-circle');
 
 module.exports = class AirportCommand extends Command {
   constructor() {
@@ -56,10 +60,10 @@ module.exports = class AirportCommand extends Command {
     }
 
     this.client.handler.getControllers().then(async (val) => {
-      const depPoint = turf.point([depAirport.longitude, depAirport.latitude]);
-      const arrPoint = turf.point([arrAirport.longitude, arrAirport.latitude]);
+      const depPoint = helpers.point([depAirport.longitude, depAirport.latitude]);
+      const arrPoint = helpers.point([arrAirport.longitude, arrAirport.latitude]);
 
-      const gcLine = turf.greatCircle(depPoint, arrPoint);
+      const gcLine = greatCircle(depPoint, arrPoint);
 
       val.forEach((result) => {
         if (result.callsign.includes(args.departure)) {
@@ -113,21 +117,21 @@ module.exports = class AirportCommand extends Command {
           polyCoords.push(polyCoords[0]);
           let polygon;
           try {
-            polygon = turf.polygon([polyCoords]);
+            polygon = helpers.polygon([polyCoords]);
           } catch (error) {
             console.log(polyCoords);
             console.log(error);
           }
 
           if (
-            turf.booleanPointInPolygon(depPoint, polygon) ||
-            turf.booleanPointInPolygon(arrPoint, polygon)
+            pointInPoly.default(depPoint, polygon) ||
+            pointInPoly.default(arrPoint, polygon)
           ) {
             return enrouteList.push(result);
           }
 
-          const intersects = turf.lineIntersect(gcLine, polygon);
-          if (intersects.features.length > 0) {
+          //const intersects = turf.lineIntersect(gcLine, polygon);
+          if (booleanIntersects.default(gcLine, polygon)) {
             return enrouteList.push(result);
           }
         }
