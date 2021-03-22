@@ -44,6 +44,6 @@
   "devDependencies": {
     "babel-eslint": "^10.1.0",
     "eslint": "^7.22.0",
-    "node-dev": "^6.4.0"
+    "node-dev": "^6.5.0"
   }
 }
