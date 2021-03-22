@@ -2,6 +2,7 @@ const { Command } = require("discord-akairo");
 const { Menu } = require("discord.js-menu");
 const { MessageEmbed } = require("discord.js");
 const AsciiTable = require("ascii-table");
+const turf = require("@turf/turf");
 
 module.exports = class AirportCommand extends Command {
   constructor() {
@@ -32,7 +33,7 @@ module.exports = class AirportCommand extends Command {
           },
         },
       ],
-      channel: 'guild',
+      channel: "guild",
     });
   }
 
@@ -46,17 +47,20 @@ module.exports = class AirportCommand extends Command {
     const depAirport = this.client.airports.items.get(args.departure);
     const arrAirport = this.client.airports.items.get(args.arrival);
 
+    if (!depAirport) {
+      return message.channel.send(`${args.departure} does not exist`);
+    }
+
+    if (!arrAirport) {
+      return message.channel.send(`${args.arrival} does not exist`);
+    }
+
     this.client.handler.getControllers().then(async (val) => {
-      const line = {
-        p1: {
-          x: depAirport.longitude,
-          y: depAirport.latitude,
-        },
-        p2: {
-          x: arrAirport.longitude,
-          y: arrAirport.latitude,
-        },
-      };
+      const depPoint = turf.point([depAirport.longitude, depAirport.latitude]);
+      const arrPoint = turf.point([arrAirport.longitude, arrAirport.latitude]);
+
+      const gcLine = turf.greatCircle(depPoint, arrPoint);
+
       val.forEach((result) => {
         if (result.callsign.includes(args.departure)) {
           departureList.push(result);
@@ -64,18 +68,68 @@ module.exports = class AirportCommand extends Command {
         } else if (result.callsign.includes(args.arrival)) {
           arrivalList.push(result);
           return;
-        } else if (positions.includes(result.facilitytype)) {
+        } else if (positions.includes(result.facility)) {
           return;
         }
-        const circle = {
-          radius: result.range,
-          center: {
-            x: result.longitude,
-            y: result.latitude,
-          },
+        let fir = {
+          coordinates: [],
         };
-        if (this.circleDistFromLineSeg(circle, line) < 3) {
-          enrouteList.push(result);
+        if (result.callsign.split("_").length > 2) {
+          const slice = result.callsign.split("_").slice(3);
+          const joinedCallsign = slice.join("_");
+          const controlPosition = this.client.positions.items.get(
+            joinedCallsign[0]
+          );
+          if (!controlPosition) {
+            const coordinates = this.client.firs.items.get(joinedCallsign[0]);
+            if (coordinates) {
+              fir.coordinates = coordinates;
+            }
+          } else {
+            const coordinates = this.client.firs.items.get(controlPosition.fir);
+            if (coordinates) {
+              fir.coordinates = coordinates;
+            }
+          }
+        } else {
+          const split = result.callsign.split("_");
+          const controlPosition = this.client.positions.items.get(split[0]);
+          if (!controlPosition) {
+            const coordinates = this.client.firs.items.get(split[0]);
+            if (coordinates) {
+              fir.coordinates = coordinates;
+            }
+          } else {
+            const coordinates = this.client.firs.items.get(controlPosition.fir);
+            if (coordinates) {
+              fir.coordinates = coordinates;
+            }
+          }
+        }
+        const polyCoords = fir.coordinates.map((obj) => {
+          return [obj.longitude, obj.latitude];
+        });
+        if (polyCoords[0]) {
+          polyCoords.push(polyCoords[0]);
+          let polygon;
+          try {
+            polygon = turf.polygon([polyCoords]);
+          } catch (error) {
+            console.log(polyCoords);
+            console.log(error);
+          }
+
+          if (
+            turf.booleanPointInPolygon(depPoint, polygon) ||
+            turf.booleanPointInPolygon(arrPoint, polygon)
+          ) {
+            return enrouteList.push(result);
+          }
+
+          const intersects = turf.lineIntersect(gcLine, polygon);
+          if (intersects.features.length > 0) {
+            return enrouteList.push(result);
+          }
         }
       });
 
@@ -95,7 +149,7 @@ module.exports = class AirportCommand extends Command {
             )
             .setColor("#47970E")
             .setDescription(
-              `Please remember that this is just a rough estimate using controllers range rings not defined FIRs`
+              `This should be an accurate representation as it uses the VAT-SPY sector definitions`
             )
             .addField("Departure Controllers 🛫", departureList.length)
             .addField("En-Route Controllers ✈️", enrouteList.length)
@@ -134,7 +188,7 @@ module.exports = class AirportCommand extends Command {
       table.addRow(
         controller.callsign,
         controller.frequency,
-        this.parsePosition(controller.facilitytype, controller.callsign)
+        this.parsePosition(controller.facility, controller.callsign)
       );
     });
     return table.toString();
@@ -143,6 +197,8 @@ module.exports = class AirportCommand extends Command {
   parsePosition(position, callsign) {
     const pos = position.toString();
     switch (pos) {
+      case "1":
+        return "Flight Service Station";
       case "2":
         return "Delivery";
       case "3":
@@ -188,32 +244,5 @@ module.exports = class AirportCommand extends Command {
       }
     }
     return cont;
-  }
-
-  circleDistFromLineSeg(circle, line) {
-    var v1, v2, v3, u;
-    v1 = {};
-    v2 = {};
-    v3 = {};
-    v1.x = line.p2.x - line.p1.x;
-    v1.y = line.p2.y - line.p1.y;
-    v2.x = circle.center.x - line.p1.x;
-    v2.y = circle.center.y - line.p1.y;
-    u = (v2.x * v1.x + v2.y * v1.y) / (v1.y * v1.y + v1.x * v1.x); // unit dist of point on line
-    if (u >= 0 && u <= 1) {
-      v3.x = v1.x * u + line.p1.x - circle.center.x;
-      v3.y = v1.y * u + line.p1.y - circle.center.y;
-      v3.x *= v3.x;
-      v3.y *= v3.y;
-      return Math.sqrt(v3.y + v3.x); // return distance from line
-    }
-    // get distance from end points
-    v3.x = circle.center.x - line.p2.x;
-    v3.y = circle.center.y - line.p2.y;
-    v3.x *= v3.x; // square vectors
-    v3.y *= v3.y;
-    v2.x *= v2.x;
-    v2.y *= v2.y;
-    return Math.min(Math.sqrt(v2.y + v2.x), Math.sqrt(v3.y + v3.x)); // return smaller of two distances as the result
   }
 };

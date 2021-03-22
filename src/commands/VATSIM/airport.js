@@ -40,9 +40,9 @@ module.exports = class AirportCommand extends Command {
       var arrArray = [];
       for (let i = 0; i < val.pilots.length; i++) {
         const pilot = val.pilots[i];
-        if (pilot.planned_depairport == airport) {
+        if (pilot.flight_plan && pilot.flight_plan.departure == airport) {
           depArray.push(pilot);
-        } else if (pilot.planned_destairport == airport) {
+        } else if (pilot.flight_plan && pilot.flight_plan.arrival == airport) {
           arrArray.push(pilot);
         }
       }
@@ -149,7 +149,7 @@ module.exports = class AirportCommand extends Command {
       const element = array[i];
       embed.addField(
         element.callsign,
-        `\`${element.planned_aircraft}\`, \`${element.planned_depairport}\`, \`${element.planned_destairport}\``
+        `\`${element.flight_plan.aircraft_short}\`, \`${element.flight_plan.departure}\`, \`${element.flight_plan.arrival}\``
       );
     }
     return embed;
@@ -164,7 +164,7 @@ module.exports = class AirportCommand extends Command {
       embed.addField(
         element.callsign,
         `Frequency: \`${element.frequency}\`, Position: \`${this.parsePosition(
-          element.facilitytype,
+          element.facility,
           element.callsign
         )}\``
       );

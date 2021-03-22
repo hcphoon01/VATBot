@@ -44,7 +44,7 @@ module.exports = class AircraftCommand extends Command {
             content: new MessageEmbed()
               .setTitle(val.callsign)
               .setColor("#47970E")
-              .setAuthor(val.realname)
+              .setAuthor(val.name)
               .addField("Speed", val.groundspeed, true)
               .addField("Altitude", val.altitude, true)
               .addField("Heading", val.heading, true),
@@ -55,19 +55,19 @@ module.exports = class AircraftCommand extends Command {
           },
         ];
 
-        if (val.planned_aircraft) {
+        if (val.flight_plan) {
           const pageContent = new MessageEmbed()
             .setTitle(val.callsign)
             .setColor("#47970E")
-            .setAuthor(val.realname)
-            .addField("Departure", val.planned_depairport, true)
-            .addField("Arrival", val.planned_destairport, true);
-          if (val.planned_altairport) {
-            pageContent.addField("Alternate", val.planned_altairport, true);
+            .setAuthor(val.name)
+            .addField("Departure", val.flight_plan.departure, true)
+            .addField("Arrival", val.flight_plan.arrival, true);
+          if (val.flight_plan.alternate) {
+            pageContent.addField("Alternate", val.flight_plan.alternate, true);
           }
           pageContent
-            .addField("Aircraft", val.planned_aircraft)
-            .addField("Route", val.planned_route);
+            .addField("Aircraft", val.flight_plan.aircraft_short)
+            .addField("Route", val.flight_plan.route);
           pages.push({
             name: "airports",
             content: pageContent,

@@ -15,17 +15,16 @@ exports.setup = function (options, seedLink) {
 };
 
 exports.up = function (db) {
-  return db.createTable("airports", {
+  return db.createTable("firs", {
     id: { type: "int", primaryKey: true },
-    icao: { type: "string", unique: true },
-    name: { type: "string" },
-    latitude: { type: "decimal" },
-    longitude: { type: "decimal" },
+    name: { type: "string", unique: true },
+    coordinates: { type: "text" },
+    parent: { type: "string" },
   });
 };
 
 exports.down = function (db) {
-  return db.dropTable("airports");
+  return db.dropTable("firs");
 };
 
 exports._meta = {
