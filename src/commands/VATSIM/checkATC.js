@@ -47,9 +47,18 @@ module.exports = class AirportCommand extends Command {
     const depAirport = this.client.airports.items.get(args.departure);
     const arrAirport = this.client.airports.items.get(args.arrival);
 
+    if (!depAirport) {
+      return message.channel.send(`${args.departure} does not exist`);
+    }
+
+    if (!arrAirport) {
+      return message.channel.send(`${args.arrival} does not exist`);
+    }
+
     this.client.handler.getControllers().then(async (val) => {
-      const depPoint = turf.point([depAirport.latitude, depAirport.longitude]);
-      const arrPoint = turf.point([arrAirport.latitude, arrAirport.longitude]);
+      const depPoint = turf.point([depAirport.longitude, depAirport.latitude]);
+      const arrPoint = turf.point([arrAirport.longitude, arrAirport.latitude]);
+
       const gcLine = turf.greatCircle(depPoint, arrPoint);
 
       val.forEach((result) => {
@@ -98,7 +107,7 @@ module.exports = class AirportCommand extends Command {
           }
         }
         const polyCoords = fir.coordinates.map((obj) => {
-          return [obj.latitude, obj.longitude];
+          return [obj.longitude, obj.latitude];
         });
         if (polyCoords[0]) {
           polyCoords.push(polyCoords[0]);
@@ -109,10 +118,17 @@ module.exports = class AirportCommand extends Command {
             console.log(polyCoords);
             console.log(error);
           }
-          // TODO does not seem to work correctly when line finishes in polygon
+
+          if (
+            turf.booleanPointInPolygon(depPoint, polygon) ||
+            turf.booleanPointInPolygon(arrPoint, polygon)
+          ) {
+            return enrouteList.push(result);
+          }
+
           const intersects = turf.lineIntersect(gcLine, polygon);
           if (intersects.features.length > 0) {
-            enrouteList.push(result);
+            return enrouteList.push(result);
           }
         }
       });
