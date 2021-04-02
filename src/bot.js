@@ -96,12 +96,26 @@ class MyClient extends AkairoClient {
         dataColumn: 'coordinates'
       }
     );
+
+    this.usersTable = new SQLiteProvider(
+      sqlite.open({
+        filename: path.join(__dirname + "/bwd/sqlite/db.sqlite"),
+        driver: sqlite3.Database,
+      }),
+      "users",
+      {
+        idColumn: "user_id",
+        dataColumn: 'data'
+      }
+    );
+
   }
   async _init() {
     await this.settings.init();
     await this.airports.init();
     await this.positions.init();
     await this.firs.init();
+    await this.usersTable.init();
   }
 }
 
