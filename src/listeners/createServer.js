@@ -1,6 +1,8 @@
 const { Listener } = require("discord-akairo");
 const express = require('express');
 const moment = require("moment");
+require("dotenv").config();
+
 const app = express();
 const port = 3000;
 
@@ -9,7 +11,7 @@ app.use(express.json());
 app.use(function (req, res, next) {
 
     // Website you wish to allow to connect
-    res.setHeader('Access-Control-Allow-Origin', 'http://homestead.test');
+    res.setHeader('Access-Control-Allow-Origin', process.env.WEB_URL);
 
     // Request methods you wish to allow
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
