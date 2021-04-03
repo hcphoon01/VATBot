@@ -46,7 +46,13 @@
   },
   "devDependencies": {
     "babel-eslint": "^10.1.0",
+    "cz-conventional-changelog": "^3.3.0",
     "eslint": "^7.22.0",
     "node-dev": "^6.5.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }
