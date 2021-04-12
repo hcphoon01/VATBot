@@ -130,7 +130,6 @@ module.exports = class AirportCommand extends Command {
             return enrouteList.push(result);
           }
 
-          //const intersects = turf.lineIntersect(gcLine, polygon);
           if (booleanIntersects.default(gcLine, polygon)) {
             return enrouteList.push(result);
           }

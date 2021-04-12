@@ -39,6 +39,12 @@ class MyClient extends AkairoClient {
       return null;
     });
 
+    this.commandHandler.resolver.addType("cid", (message, phrase) => {
+      if (!phrase) return null;
+      if (/^\d+$/.test(phrase)) return phrase;
+      return null;
+    });
+
     this.listenerHandler = new ListenerHandler(this, {
       directory: "./src/listeners/",
     });
