@@ -1,6 +1,6 @@
 const { Command } = require("discord-akairo");
 const { Menu } = require("discord.js-menu");
-const { MessageEmbed } = require("discord.js");
+const MessageEmbed = require("../../Util/MessageEmbed");
 
 module.exports = class AirportCommand extends Command {
   constructor() {
@@ -61,9 +61,7 @@ module.exports = class AirportCommand extends Command {
       const pages = [
         {
           name: "main",
-          content: new MessageEmbed()
-            .setTitle(`Airport Details for ${airport}`)
-            .setColor("#47970E")
+          content: MessageEmbed(`Airport Details for ${airport}`, message, this.client)
             .addField("Departures 🛫", depArray.length)
             .addField("Arrivals 🛬", arrArray.length)
             .addField("Controllers 📡", val.controllers.length),
@@ -80,13 +78,13 @@ module.exports = class AirportCommand extends Command {
         if (i == 0) {
           pages.push({
             name: "departures",
-            content: this.createAircraftEmbed("Departure", element, airport),
+            content: this.createAircraftEmbed("Departure", element, airport, message),
             reactions: reactions,
           });
         } else {
           pages.push({
             name: `departures${i}`,
-            content: this.createAircraftEmbed("Departure", element, airport),
+            content: this.createAircraftEmbed("Departure", element, airport, message),
             reactions: reactions,
           });
         }
@@ -101,13 +99,13 @@ module.exports = class AirportCommand extends Command {
         if (i == 0) {
           pages.push({
             name: "arrivals",
-            content: this.createAircraftEmbed("Arrival", element, airport),
+            content: this.createAircraftEmbed("Arrival", element, airport, message),
             reactions: reactions,
           });
         } else {
           pages.push({
             name: `arrivals${i}`,
-            content: this.createAircraftEmbed("Arrival", element, airport),
+            content: this.createAircraftEmbed("Arrival", element, airport, message),
             reactions: reactions,
           });
         }
@@ -122,13 +120,13 @@ module.exports = class AirportCommand extends Command {
         if (i == 0) {
           pages.push({
             name: "controllers",
-            content: this.createControllerEmbed(element, airport),
+            content: this.createControllerEmbed(element, airport, message),
             reactions: reactions,
           });
         } else {
           pages.push({
             name: `controllers${i}`,
-            content: this.createControllerEmbed(element, airport),
+            content: this.createControllerEmbed(element, airport, message),
             reactions: reactions,
           });
         }
@@ -140,10 +138,8 @@ module.exports = class AirportCommand extends Command {
     });
   }
 
-  createAircraftEmbed(type, array, airport) {
-    const embed = new MessageEmbed()
-      .setTitle(`${type} details for ${airport}`)
-      .setColor("#47970E")
+  createAircraftEmbed(type, array, airport, message) {
+    const embed = MessageEmbed(`${type} details for ${airport}`, message, this.client)
       .setDescription("Aircraft, Departure, Arrival");
     for (let i = 0; i < array.length; i++) {
       const element = array[i];
@@ -155,10 +151,8 @@ module.exports = class AirportCommand extends Command {
     return embed;
   }
 
-  createControllerEmbed(array, airport) {
-    const embed = new MessageEmbed()
-      .setTitle(`Controller details for ${airport}`)
-      .setColor("#47970E");
+  createControllerEmbed(array, airport, message) {
+    const embed = MessageEmbed(`Controller details for ${airport}`, message, this.client);
     for (let i = 0; i < array.length; i++) {
       const element = array[i];
       embed.addField(

@@ -1,5 +1,5 @@
 const { Command } = require("discord-akairo");
-const { MessageEmbed } = require("discord.js");
+const MessageEmbed = require("../../Util/MessageEmbed");
 
 module.exports = class FlightGeneratorCommand extends Command {
   constructor() {
@@ -19,7 +19,7 @@ module.exports = class FlightGeneratorCommand extends Command {
           default: null,
         },
       ],
-      channel: 'guild',
+      channel: "guild",
     });
   }
 
@@ -56,9 +56,7 @@ module.exports = class FlightGeneratorCommand extends Command {
           }
         });
 
-        const embed = new MessageEmbed()
-          .setTitle("Random Flight")
-          .setColor("#47970E")
+        const embed = MessageEmbed("Random Flight", message, this.client)
           .addField(
             "Departure",
             `\`${closest[0].details.icao}\`, \`${closest[0].count}\` users`
@@ -82,9 +80,7 @@ module.exports = class FlightGeneratorCommand extends Command {
           arrival.longitude
         );
 
-        const embed = new MessageEmbed()
-          .setTitle("Random Flight")
-          .setColor("#47970E")
+        const embed = MessageEmbed("Random Flight", message, this.client)
           .addField(
             "Departure",
             `\`${departure.icao}\`, \`${airports[0].count}\` users`

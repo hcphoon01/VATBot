@@ -1,5 +1,5 @@
 const { Command } = require("discord-akairo");
-const { MessageEmbed } = require("discord.js");
+const MessageEmbed = require('../../Util/MessageEmbed');
 const moment = require("moment");
 const os = require('os');
 
@@ -18,11 +18,7 @@ module.exports = class StatCommand extends Command {
     const now = moment(new Date);
     const start = Date.now() - (process.uptime() * 1000);
     return message.channel.send(
-      new MessageEmbed()
-        .setTitle(`${this.client.user.username} Stats`)
-        .setThumbnail(this.client.user.displayAvatarURL({ format: 'webp', size: 128 }))
-        .setAuthor(this.client.users.cache.get(this.client.ownerID).username)
-        .setColor("#47970E")
+      MessageEmbed(`${this.client.user.username} Stats`, message, this.client)
         .addField(
           "Discord",
           [

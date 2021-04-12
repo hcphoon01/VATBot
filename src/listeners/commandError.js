@@ -17,6 +17,9 @@ module.exports = class CommandErrorListener extends Listener {
       const embed = new MessageEmbed()
         .setColor("#47970E")
         .setTitle("Command Error")
+        .setThumbnail(
+          client.user.displayAvatarURL({ format: "webp", size: 128 })
+        )
         .setDescription(
           "A command has failed to run on your server due to missing permissions, see below for details"
         )

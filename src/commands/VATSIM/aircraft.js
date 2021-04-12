@@ -1,6 +1,6 @@
 const { Command } = require("discord-akairo");
 const { Menu } = require("discord.js-menu");
-const { MessageEmbed } = require("discord.js");
+const MessageEmbed = require('../../Util/MessageEmbed');
 
 module.exports = class AircraftCommand extends Command {
   constructor() {
@@ -41,10 +41,7 @@ module.exports = class AircraftCommand extends Command {
         const pages = [
           {
             name: "main",
-            content: new MessageEmbed()
-              .setTitle(val.callsign)
-              .setColor("#47970E")
-              .setAuthor(val.name)
+            content: MessageEmbed(val.callsign, message, this.client)
               .addField("Speed", val.groundspeed, true)
               .addField("Altitude", val.altitude, true)
               .addField("Heading", val.heading, true),
@@ -56,10 +53,7 @@ module.exports = class AircraftCommand extends Command {
         ];
 
         if (val.flight_plan) {
-          const pageContent = new MessageEmbed()
-            .setTitle(val.callsign)
-            .setColor("#47970E")
-            .setAuthor(val.name)
+          const pageContent = MessageEmbed(val.callsign, message, this.client)
             .addField("Departure", val.flight_plan.departure, true)
             .addField("Arrival", val.flight_plan.arrival, true);
           if (val.flight_plan.alternate) {

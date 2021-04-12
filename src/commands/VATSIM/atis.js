@@ -1,5 +1,5 @@
 const { Command } = require("discord-akairo");
-const { MessageEmbed } = require("discord.js");
+const MessageEmbed = require("../../Util/MessageEmbed");
 
 module.exports = class ATISCommand extends Command {
   constructor() {
@@ -30,9 +30,7 @@ module.exports = class ATISCommand extends Command {
     this.client.handler.getAirportInfo(airport).then((val) => {
       if (val.atis) {
         val.atis.text_atis = val.atis.text_atis.join(" ");
-        const embed = new MessageEmbed()
-          .setTitle(`ATIS for ${airport}`)
-          .setColor("#47970E")
+        const embed = MessageEmbed(`ATIS for ${airport}`, message, this.client)
           .setDescription("```" + val.atis.text_atis + "```");
         return message.channel.send(embed);
       } else {

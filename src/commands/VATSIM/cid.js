@@ -1,6 +1,7 @@
 const { Command } = require("discord-akairo");
-const { MessageEmbed } = require("discord.js");
+const MessageEmbed = require('../../Util/MessageEmbed');
 const request = require("request");
+const moment = require('moment');
 
 module.exports = class CIDCommand extends Command {
   constructor() {
@@ -39,25 +40,28 @@ module.exports = class CIDCommand extends Command {
             (err, res, body) => {
               if (err) console.log(err);
               if (res.statusCode == 200) {
-                const embed = new MessageEmbed()
-                  .setTitle(`Results for CID: ${args.cid}`)
-                  .setColor("#47970E")
-                  .setFooter(`Requested by ${message.author.username}`)
-                  .setThumbnail(
-                    "https://cdn.discordapp.com/icons/549538230610165763/3f59f38a0ba647a95a759df3796f588e.webp?size=512"
+                const embed = MessageEmbed(`Results for CID: ${args.cid}`, message, this.client)
+                  .addField(
+                    "Name",
+                    `${mainBody.name_first} ${mainBody.name_last}`
                   )
-                  .addField("Name", `${mainBody.name_first} ${mainBody.name_last}`)
-                  .addField("Controller Rating", this.parseRating(mainBody.rating))
+                  .addField(
+                    "Controller Rating",
+                    this.parseRating(mainBody.rating)
+                  )
                   .addField(
                     "Pilot Rating",
                     this.parsePilotRating(mainBody.pilotrating)
                   )
-                  .addField('Hours Controlling', this.parseTime(body.atc))
-                  .addField('Hours Flying', this.parseTime(body.pilot));
+                  .addField("Hours Controlling", this.parseTime(body.atc))
+                  .addField("Hours Flying", this.parseTime(body.pilot));
                 return message.channel.send(embed);
               }
             }
           );
+        }
+        else {
+          console.log(mainBody);
         }
       }
     );
@@ -115,10 +119,12 @@ module.exports = class CIDCommand extends Command {
     }
   }
 
-  parseTime(time){
+  parseTime(time) {
     var sign = time < 0 ? "-" : "";
     var hour = Math.floor(Math.abs(time));
     var min = Math.floor((Math.abs(time) * 60) % 60);
-    return sign + (hour < 10 ? "0" : "") + hour + ":" + (min < 10 ? "0" : "") + min;
-   }
+    return (
+      sign + (hour < 10 ? "0" : "") + hour + ":" + (min < 10 ? "0" : "") + min
+    );
+  }
 };

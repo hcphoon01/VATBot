@@ -1,6 +1,6 @@
 const { Command } = require("discord-akairo");
 const { Menu } = require("discord.js-menu");
-const { MessageEmbed } = require("discord.js");
+const MessageEmbed = require("../../Util/MessageEmbed");
 const AsciiTable = require("ascii-table");
 //const turf = require("@turf/turf");
 const booleanIntersects = require('@turf/boolean-intersects');
@@ -146,11 +146,7 @@ module.exports = class AirportCommand extends Command {
       const pages = [
         {
           name: "main",
-          content: new MessageEmbed()
-            .setTitle(
-              `Current ATC between ${args.departure} and ${args.arrival}`
-            )
-            .setColor("#47970E")
+          content: MessageEmbed(`Current ATC between ${args.departure} and ${args.arrival}`, message, this.client)
             .setDescription(
               `This should be an accurate representation as it uses the VAT-SPY sector definitions`
             )
@@ -164,19 +160,19 @@ module.exports = class AirportCommand extends Command {
       // Departure
       pages.push({
         name: "departures",
-        content: this.createContent("Departure", departureList, args.departure),
+        content: this.createContent(message, "Departure", departureList, args.departure),
         reactions: reactions,
       });
 
       pages.push({
         name: "en-route",
-        content: this.createContent("En-Route", enrouteList),
+        content: this.createContent(message, "En-Route", enrouteList),
         reactions: reactions,
       });
 
       pages.push({
         name: "arrivals",
-        content: this.createContent("Arrival", arrivalList, args.arrival),
+        content: this.createContent(message, "Arrival", arrivalList, args.arrival),
         reactions: reactions,
       });
 
@@ -225,8 +221,8 @@ module.exports = class AirportCommand extends Command {
     }
   }
 
-  createContent(type, data, airport = null) {
-    let cont = new MessageEmbed().setColor("#47970E");
+  createContent(message, type, data, airport = null) {
+    let cont = MessageEmbed('', message, this.client);
 
     if (data.length > 0) {
       cont.addField(

@@ -1,5 +1,5 @@
 const { Command } = require("discord-akairo");
-const { MessageEmbed } = require("discord.js");
+const MessageEmbed = require("../../../Util/MessageEmbed");
 
 const request = require("request");
 require("dotenv").config();
@@ -43,9 +43,7 @@ module.exports = class TafCommand extends Command {
             console.log(err);
           }
           if (body.results !== 0) {
-            const embed = new MessageEmbed()
-              .setTitle(`RAW TAF for ${airport}`)
-              .setColor("#47970E")
+            const embed = MessageEmbed(`RAW TAF for ${airport}`, message, this.client)
               .setDescription("```" + body.data[0] + "```");
 
             return message.channel.send(embed);
@@ -66,9 +64,7 @@ module.exports = class TafCommand extends Command {
             console.log(err);
           }
           if (body.results !== 0) {
-            const embed = new MessageEmbed()
-              .setTitle(`TAF Results`)
-              .setColor("#47970E");
+            const embed = MessageEmbed(`TAF Results`, message, this.client);
             body.data.forEach((result, i) => {
               embed.addField(airport[i], "```" + result + "```");
             });

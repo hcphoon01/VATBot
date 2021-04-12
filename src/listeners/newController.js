@@ -1,5 +1,5 @@
 const { Listener } = require("discord-akairo");
-const { MessageEmbed } = require("discord.js");
+const MessageEmbed = require("../Util/MessageEmbed");
 
 module.exports = class NewControllerListener extends Listener {
   constructor() {
@@ -10,12 +10,12 @@ module.exports = class NewControllerListener extends Listener {
   }
 
   async exec(data) {
-    const embed = new MessageEmbed()
+    const embed = MessageEmbed()
       .setColor("#47970E")
       .setTitle("New Controller Notification")
       .setDescription("See below for new controller activity\n")
       .setThumbnail(
-        "https://cdn.discordapp.com/app-icons/630862807897997341/989f99692163a76a7b81f91f8b094f11.png"
+        client.user.displayAvatarURL({ format: "webp", size: 128 })
       );
 
     data.forEach((controller) => {
@@ -23,9 +23,9 @@ module.exports = class NewControllerListener extends Listener {
       if (controller.facility == 0) return;
       embed.addField(
         `Callsign: ${controller.callsign}`,
-        `Frequency: \`${controller.frequency}\`, Position: \`${this.parsePosition(
-          controller.facility
-        )}\``
+        `Frequency: \`${
+          controller.frequency
+        }\`, Position: \`${this.parsePosition(controller.facility)}\``
       );
     });
     if (embed.fields.length > 0) {

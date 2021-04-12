@@ -1,5 +1,5 @@
 const { Command } = require("discord-akairo");
-const { MessageEmbed } = require("discord.js");
+const MessageEmbed = require('../../../Util/MessageEmbed');
 const { Menu } = require("discord.js-menu");
 const moment = require("moment");
 const request = require("request");
@@ -56,10 +56,8 @@ module.exports = class DtafCommand extends Command {
             {
               name: "main",
               reactions: reactions,
-              content: new MessageEmbed()
-                .setTitle(`Decoded TAF for ${airport}`)
+              content: MessageEmbed(`Decoded TAF for ${airport}`, message, this.client)
                 .setDescription("RAW TAF: " + "`" + body.data[0].raw_text + "`")
-                .setColor("#47970E")
                 .addField(
                   "Forecast",
                   `From: ${moment(body.data[0].timestamp.from).format(
@@ -75,10 +73,8 @@ module.exports = class DtafCommand extends Command {
 
           for (let i = 0; i < forecastArray.length; i++) {
             const forecast = forecastArray[i];
-            const content = new MessageEmbed()
-              .setTitle(`Decoded TAF for ${airport}`)
-              .setDescription("RAW TAF: " + "`" + body.data[0].raw_text + "`")
-              .setColor("#47970E");
+            const content = MessageEmbed(`Decoded TAF for ${airport}`, message, this.client)
+              .setDescription("RAW TAF: " + "`" + body.data[0].raw_text + "`");
             if (i != 0) {
               content.addField(
                 `${forecast.change.indicator.text}`,
