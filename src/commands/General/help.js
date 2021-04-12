@@ -1,5 +1,5 @@
 const { Command, PrefixSupplier } = require("discord-akairo");
-const { Message, MessageEmbed } = require("discord.js");
+const MessageEmbed = require("../../Util/MessageEmbed");
 const { stripIndents } = require("common-tags");
 
 module.exports = class HelpCommand extends Command {
@@ -33,7 +33,7 @@ module.exports = class HelpCommand extends Command {
     }
 
     if (!command) {
-      const embed = new MessageEmbed().setColor("#47970E").addField(
+      const embed = MessageEmbed("", message, this.client).addField(
         "❯ Commands",
         stripIndents`A list of available commands.
                     For additional info on a command, type \`${prefix}help <command>\`
@@ -44,7 +44,9 @@ module.exports = class HelpCommand extends Command {
         embed.addField(
           `❯ ${category.id.replace(/(\b\w)/gi, (lc) => lc.toUpperCase())}`,
           `${category
-            .filter((cmd) => cmd.aliases.length > 0 && !cmd.description.hideHelp)
+            .filter(
+              (cmd) => cmd.aliases.length > 0 && !cmd.description.hideHelp
+            )
             .map((cmd) => `\`${cmd.aliases[0]}\``)
             .join(" ")}`
         );
@@ -53,13 +55,13 @@ module.exports = class HelpCommand extends Command {
       return message.channel.send(embed);
     }
 
-    const embed = new MessageEmbed()
-      .setColor("47970E")
-      .setTitle(
-        `\`${command.aliases[0]} ${
-          command.description.usage ? command.description.usage : ""
-        }\``
-      )
+    const embed = MessageEmbed(
+      `\`${command.aliases[0]} ${
+        command.description.usage ? command.description.usage : ""
+      }\``,
+      message,
+      this.client
+    )
       .addField(
         "❯ Description",
         `${command.description.content ? command.description.content : ""} ${
